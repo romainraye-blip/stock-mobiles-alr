@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<script type="application/json" id="cowork-artifact-meta">
+<!DOCTYPE html><script type="application/json" id="cowork-artifact-meta">
 {
   "name": "Stock Mobiles Agences",
   "schemaVersion": 1,
-  "description": "Tableau de bord des stocks mobiles pour Anjou Liaisons Radio. Affiche les stocks par agence (Amboise, Angers, Châteaudun, Cholet, Romorantin, Vendôme) avec filtres et recherche. Mis à jour automatiquement par tâche planifiée.",
+  "description": "Tableau de bord live des stocks mobiles pour Anjou Liaisons Radio.",
   "mcpTools": [],
   "mcpServerNames": []
 }
@@ -14,351 +13,99 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stock Mobiles — Anjou Liaisons Radio</title>
 <style>
-:root {
-  color-scheme: light;
-  --amboise:    #6366f1;
-  --angers:     #f97316;
-  --chateaudun: #10b981;
-  --cholet:     #8b5cf6;
-  --romorantin: #ec4899;
-  --vendome:    #f59e0b;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background: #f0f2f8; color: #1a1a2e; min-height: 100vh; }
-
-/* ── Header ── */
-.header {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
-  padding: 1.5rem 1.5rem 5rem;
-  position: relative;
-  overflow: hidden;
-}
-.header::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 80% 50%, rgba(99,102,241,0.18) 0%, transparent 60%),
-              radial-gradient(ellipse at 20% 80%, rgba(249,115,22,0.12) 0%, transparent 50%);
-}
-.header-inner { position: relative; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-.brand { display: flex; align-items: center; gap: 12px; }
-.brand-icon {
-  width: 44px; height: 44px; border-radius: 12px;
-  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
-  display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
-}
-.brand-text h1 { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
-.brand-text p { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 2px; }
-.header-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-.update-badge {
-  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 20px; padding: 4px 12px;
-  font-size: 11px; color: rgba(255,255,255,0.6);
-  white-space: nowrap;
-}
-.live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #4ade80; margin-right: 5px; animation: pulse 2s infinite; vertical-align: middle; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
-/* ── Agency cards (floating over header) ── */
-.cards-wrapper {
-  margin-top: -3.5rem;
-  padding: 0 1.5rem;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-.cards-wrapper::-webkit-scrollbar { display: none; }
-.cards-row {
-  display: flex; gap: 12px;
-  padding-bottom: 4px;
-  min-width: max-content;
-}
-.ag-card {
-  border-radius: 16px; padding: 16px 18px 14px;
-  min-width: 110px; text-align: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-  cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
-  position: relative; overflow: hidden;
-  border: 2px solid transparent;
-}
-.ag-card::before {
-  content: ''; position: absolute; inset: 0;
-  background: inherit; opacity: 0.12; z-index: 0;
-}
-.ag-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.18); }
-.ag-card.active { border-color: currentColor; transform: translateY(-2px); }
-.ag-card > * { position: relative; z-index: 1; }
-.ag-name { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; opacity: 0.8; margin-bottom: 6px; }
-.ag-count { font-size: 32px; font-weight: 800; line-height: 1; }
-.ag-label { font-size: 10px; opacity: 0.65; margin-top: 3px; }
-.ag-card.all-card { background: #1a1a2e; color: #fff; }
-.ag-card[data-ag="AMBOISE"]    { background: #eef2ff; color: var(--amboise); }
-.ag-card[data-ag="ANGERS"]     { background: #fff7ed; color: var(--angers); }
-.ag-card[data-ag="CHÂTEAUDUN"] { background: #ecfdf5; color: var(--chateaudun); }
-.ag-card[data-ag="CHOLET"]     { background: #f5f3ff; color: var(--cholet); }
-.ag-card[data-ag="ROMORANTIN"] { background: #fdf2f8; color: var(--romorantin); }
-.ag-card[data-ag="VENDÔME"]    { background: #fffbeb; color: var(--vendome); }
-
-/* ── Main content ── */
-.main { padding: 1.25rem 1.5rem 3rem; max-width: 900px; margin: 0 auto; }
-
-/* ── Search ── */
-.search-wrap { position: relative; margin-bottom: 1rem; }
-.search-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #94a3b8; pointer-events: none; }
-.search-wrap input {
-  width: 100%; padding: 12px 14px 12px 40px;
-  border: 2px solid #e2e8f0; border-radius: 14px;
-  font-size: 14px; font-family: inherit; background: #fff; outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
-.search-wrap input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
-.search-wrap input::placeholder { color: #cbd5e1; }
-
-/* ── Status ── */
-.statusbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
-.status-count { font-size: 12px; font-weight: 600; color: #64748b; }
-.status-label { font-size: 12px; color: #94a3b8; }
-
-/* ── Table ── */
-.table-outer { background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.07); border: 1px solid #e8eaf0; }
-.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-thead tr { background: #f8fafc; }
-thead th {
-  padding: 12px 14px; font-size: 10px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.07em; border-bottom: 2px solid #f1f5f9;
-  text-align: center; white-space: nowrap;
-}
-thead th:first-child { text-align: left; color: #64748b; }
-.th-ag { font-size: 10px; font-weight: 800; }
-.th-ag[data-ag="AMBOISE"]    { color: var(--amboise); }
-.th-ag[data-ag="ANGERS"]     { color: var(--angers); }
-.th-ag[data-ag="CHÂTEAUDUN"] { color: var(--chateaudun); }
-.th-ag[data-ag="CHOLET"]     { color: var(--cholet); }
-.th-ag[data-ag="ROMORANTIN"] { color: var(--romorantin); }
-.th-ag[data-ag="VENDÔME"]    { color: var(--vendome); }
-.th-total { color: #1a1a2e; }
-
-tbody tr { border-bottom: 1px solid #f8fafc; transition: background 0.1s; }
-tbody tr:last-child { border-bottom: none; }
-tbody tr.totals-row { background: #f8faff; }
-tbody tr:not(.totals-row):hover { background: #f8faff; }
-tbody td { padding: 9px 14px; text-align: center; }
-tbody td:first-child { text-align: left; color: #334155; font-size: 12px; line-height: 1.4; padding-right: 1rem; }
-.totals-row td { font-weight: 700; border-top: 2px solid #e8eaf0; color: #1a1a2e; }
-
-/* ── Quantity badges ── */
-.qty-badge {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-width: 28px; height: 24px; border-radius: 8px;
-  font-size: 12px; font-weight: 700; padding: 0 6px;
-}
-.qty-zero { color: #e2e8f0; }
-.qty-badge[data-ag="AMBOISE"]    { background: #eef2ff; color: var(--amboise); }
-.qty-badge[data-ag="ANGERS"]     { background: #fff7ed; color: var(--angers); }
-.qty-badge[data-ag="CHÂTEAUDUN"] { background: #ecfdf5; color: var(--chateaudun); }
-.qty-badge[data-ag="CHOLET"]     { background: #f5f3ff; color: var(--cholet); }
-.qty-badge[data-ag="ROMORANTIN"] { background: #fdf2f8; color: var(--romorantin); }
-.qty-badge[data-ag="VENDÔME"]    { background: #fffbeb; color: var(--vendome); }
-.qty-total {
-  background: #1a1a2e; color: #fff;
-  display: inline-flex; align-items: center; justify-content: center;
-  min-width: 28px; height: 24px; border-radius: 8px; font-size: 12px; font-weight: 700; padding: 0 6px;
-}
-.totals-row .qty-badge { font-weight: 800; }
-.totals-row .qty-total { background: #1a1a2e; }
-
-/* ── Empty state ── */
-.empty { padding: 3rem; text-align: center; color: #94a3b8; font-size: 14px; }
-
-/* ── Footer ── */
-.footer { text-align: center; margin-top: 2rem; font-size: 11px; color: #94a3b8; }
+:root{color-scheme:light;--amboise:#6366f1;--angers:#f97316;--chateaudun:#10b981;--cholet:#8b5cf6;--romorantin:#ec4899;--vendome:#f59e0b}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:#f0f2f8;color:#1a1a2e;min-height:100vh}
+.header{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%);padding:1.5rem 1.5rem 5rem;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(99,102,241,.18) 0%,transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(249,115,22,.12) 0%,transparent 50%)}
+.header-inner{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-icon{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.brand-text h1{font-size:18px;font-weight:700;color:#fff;letter-spacing:-.02em}
+.brand-text p{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px}
+.header-meta{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.update-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 12px;font-size:11px;color:rgba(255,255,255,.6);white-space:nowrap}
+.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#4ade80;margin-right:5px;animation:pulse 2s infinite;vertical-align:middle}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.cards-wrapper{margin-top:-3.5rem;padding:0 1.5rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cards-wrapper::-webkit-scrollbar{display:none}
+.cards-row{display:flex;gap:12px;padding-bottom:4px;min-width:max-content}
+.ag-card{border-radius:16px;padding:16px 18px 14px;min-width:110px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.12);cursor:pointer;transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden;border:2px solid transparent}
+.ag-card::before{content:'';position:absolute;inset:0;background:inherit;opacity:.12;z-index:0}
+.ag-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.18)}
+.ag-card.active{border-color:currentColor;transform:translateY(-2px)}
+.ag-card>*{position:relative;z-index:1}
+.ag-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.8;margin-bottom:6px}
+.ag-count{font-size:32px;font-weight:800;line-height:1}
+.ag-label{font-size:10px;opacity:.65;margin-top:3px}
+.ag-card.all-card{background:#1a1a2e;color:#fff}
+.ag-card[data-ag="AMBOISE"]{background:#eef2ff;color:var(--amboise)}
+.ag-card[data-ag="ANGERS"]{background:#fff7ed;color:var(--angers)}
+.ag-card[data-ag="CHÂTEAUDUN"]{background:#ecfdf5;color:var(--chateaudun)}
+.ag-card[data-ag="CHOLET"]{background:#f5f3ff;color:var(--cholet)}
+.ag-card[data-ag="ROMORANTIN"]{background:#fdf2f8;color:var(--romorantin)}
+.ag-card[data-ag="VENDÔME"]{background:#fffbeb;color:var(--vendome)}
+.main{padding:1.25rem 1.5rem 3rem;max-width:900px;margin:0 auto}
+.search-wrap{position:relative;margin-bottom:1rem}
+.search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:#94a3b8;pointer-events:none}
+.search-wrap input{width:100%;padding:12px 14px 12px 40px;border:2px solid #e2e8f0;border-radius:14px;font-size:14px;font-family:inherit;background:#fff;outline:none;transition:border-color .15s,box-shadow .15s;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.search-wrap input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.search-wrap input::placeholder{color:#cbd5e1}
+.statusbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+.status-count{font-size:12px;font-weight:600;color:#64748b}
+.status-label{font-size:12px;color:#94a3b8}
+.table-outer{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.07);border:1px solid #e8eaf0}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:#f8fafc}
+thead th{padding:12px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;border-bottom:2px solid #f1f5f9;text-align:center;white-space:nowrap}
+thead th:first-child{text-align:left;color:#64748b}
+.th-ag{font-size:10px;font-weight:800}
+.th-ag[data-ag="AMBOISE"]{color:var(--amboise)}
+.th-ag[data-ag="ANGERS"]{color:var(--angers)}
+.th-ag[data-ag="CHÂTEAUDUN"]{color:var(--chateaudun)}
+.th-ag[data-ag="CHOLET"]{color:var(--cholet)}
+.th-ag[data-ag="ROMORANTIN"]{color:var(--romorantin)}
+.th-ag[data-ag="VENDÔME"]{color:var(--vendome)}
+.th-total{color:#1a1a2e}
+tbody tr{border-bottom:1px solid #f8fafc;transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr.totals-row{background:#f8faff}
+tbody tr:not(.totals-row):hover{background:#f8faff}
+tbody td{padding:9px 14px;text-align:center}
+tbody td:first-child{text-align:left;color:#334155;font-size:12px;line-height:1.4;padding-right:1rem}
+.totals-row td{font-weight:700;border-top:2px solid #e8eaf0;color:#1a1a2e}
+.qty-badge{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:24px;border-radius:8px;font-size:12px;font-weight:700;padding:0 6px}
+.qty-zero{color:#e2e8f0}
+.qty-badge[data-ag="AMBOISE"]{background:#eef2ff;color:var(--amboise)}
+.qty-badge[data-ag="ANGERS"]{background:#fff7ed;color:var(--angers)}
+.qty-badge[data-ag="CHÂTEAUDUN"]{background:#ecfdf5;color:var(--chateaudun)}
+.qty-badge[data-ag="CHOLET"]{background:#f5f3ff;color:var(--cholet)}
+.qty-badge[data-ag="ROMORANTIN"]{background:#fdf2f8;color:var(--romorantin)}
+.qty-badge[data-ag="VENDÔME"]{background:#fffbeb;color:var(--vendome)}
+.qty-total{background:#1a1a2e;color:#fff;display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:24px;border-radius:8px;font-size:12px;font-weight:700;padding:0 6px}
+.totals-row .qty-badge{font-weight:800}
+.totals-row .qty-total{background:#1a1a2e}
+.empty{padding:3rem;text-align:center;color:#94a3b8;font-size:14px}
+.footer{text-align:center;margin-top:2rem;font-size:11px;color:#94a3b8}
 </style>
 </head>
 <body>
-
-<!-- Header -->
-<div class="header">
-  <div class="header-inner">
-    <div class="brand">
-      <div class="brand-icon">&#128241;</div>
-      <div class="brand-text">
-        <h1>Stock Mobiles</h1>
-        <p>Anjou Liaisons Radio &mdash; 6 agences</p>
-      </div>
-    </div>
-    <div class="header-meta">
-      <div class="update-badge">
-        <span class="live-dot"></span>
-        <span id="lastUpdate">Chargement…</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Agency summary cards -->
-<div class="cards-wrapper">
-  <div class="cards-row" id="agencyCards"></div>
-</div>
-
-<!-- Main -->
+<div class="header"><div class="header-inner"><div class="brand"><div class="brand-icon">&#128241;</div><div class="brand-text"><h1>Stock Mobiles</h1><p>Anjou Liaisons Radio &mdash; 6 agences</p></div></div><div class="header-meta"><div class="update-badge"><span class="live-dot"></span><span id="lastUpdate">Chargement…</span></div></div></div></div>
+<div class="cards-wrapper"><div class="cards-row" id="agencyCards"></div></div>
 <div class="main">
-  <div class="search-wrap">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
-    <input type="text" id="search" placeholder="Rechercher un modèle&hellip;" oninput="renderTable()" aria-label="Rechercher un modèle" />
-  </div>
-
-  <div class="statusbar">
-    <span class="status-count" id="statusCount"></span>
-    <span class="status-label" id="statusLabel"></span>
-  </div>
-
-  <div class="table-outer">
-    <div class="table-scroll">
-      <div id="tableContent"></div>
-    </div>
-  </div>
-
-  <div class="footer">Source : 3GWIN &middot; Mis à jour automatiquement toutes les heures</div>
+<div class="search-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="search" placeholder="Rechercher un modèle…" oninput="renderTable()" aria-label="Rechercher un modèle"/></div>
+<div class="statusbar"><span class="status-count" id="statusCount"></span><span class="status-label" id="statusLabel"></span></div>
+<div class="table-outer"><div class="table-scroll"><div id="tableContent"></div></div></div>
+<div class="footer">Source : 3GWIN &middot; Mis à jour automatiquement toutes les heures</div>
 </div>
-
 <script>
-const STOCK_DATA = {
-  "lastUpdate": "Vérifié le 24/06/2026 à 17:04 · Source 3GWIN 16:48",
-  "agencies": ["AMBOISE","ANGERS","CHÂTEAUDUN","CHOLET","ROMORANTIN","VENDÔME"],
-  "products": [
-    {"name":"APPLE IPHONE 17 256GO LAVANDE SFR","quantities":[0,0,0,1,0,0]},
-    {"name":"APPLE IPHONE 17 256GO NOIR SFR","quantities":[1,2,1,2,2,1]},
-    {"name":"APPLE IPHONE 17 PRO 256GO BLEU INT SFR","quantities":[0,1,0,1,1,0]},
-    {"name":"APPLE IPHONE 17 PRO MAX 256GO ORANGE COS SFR","quantities":[0,0,1,0,0,0]},
-    {"name":"APPLE IPHONE 17E 256GO NOIR SFR-TEAM","quantities":[0,0,0,1,0,0]},
-    {"name":"APPLE IPHONE AIR 256GO NOIR SIDERAL SFR-TEAM","quantities":[0,1,0,0,0,0]},
-    {"name":"BOX 5G RECYCLÉE VERSION SFR","quantities":[0,4,0,1,0,0]},
-    {"name":"DORO LEVA L30 BLACK SFR","quantities":[1,1,2,1,2,1]},
-    {"name":"DORO LEVA L30 RED SFR","quantities":[1,0,0,0,1,0]},
-    {"name":"HONOR 400 SMART 128GO GRIS SFR","quantities":[0,1,0,0,0,0]},
-    {"name":"HONOR 600 256GO NOIR SFR","quantities":[0,0,0,1,0,0]},
-    {"name":"HONOR 600 LITE 256GO NOIR SFR","quantities":[0,1,0,2,1,1]},
-    {"name":"HONOR 600 LITE 256GO VERT SFR","quantities":[0,0,0,1,0,0]},
-    {"name":"HONOR 600 SMART 128GO NOIR SFR","quantities":[2,0,0,0,3,0]},
-    {"name":"HONOR MAGIC 5 PRO 5G NOIR 512GO SFR","quantities":[0,0,0,0,0,1]},
-    {"name":"HONOR MAGIC 8 LITE 256GO NOIR SFR","quantities":[0,1,0,1,0,0]},
-    {"name":"HONOR X5C PLUS 64GO NOIR SFR","quantities":[0,2,4,2,4,1]},
-    {"name":"HONOR X6B 128GO NOIR SFR","quantities":[0,1,0,0,0,0]},
-    {"name":"IPHONE 13 128GO BLEU TRES BON ETAT SFR","quantities":[1,0,0,0,0,0]},
-    {"name":"PACK MAGIC 8 LITE + HONOR HEADPHONE LITE SFR","quantities":[0,0,1,0,0,0]},
-    {"name":"SAMSUNG GALAXY A17 5G 128GO BLEU SFR","quantities":[2,0,2,2,0,0]},
-    {"name":"SAMSUNG GALAXY A17 5G 128GO NOIR SFR","quantities":[3,2,3,2,0,1]},
-    {"name":"SAMSUNG GALAXY A36 5G 128GO LAVANDE SFR","quantities":[0,0,1,0,0,0]},
-    {"name":"SAMSUNG GALAXY A37 128GO LAVANDE SFR","quantities":[1,0,0,0,1,0]},
-    {"name":"SAMSUNG GALAXY A37 256GO GRAPHITE SFR","quantities":[0,1,2,0,1,1]},
-    {"name":"SAMSUNG GALAXY A55 5G 128GO BLEU SFR","quantities":[1,0,0,0,0,0]},
-    {"name":"SAMSUNG GALAXY A56 5G 256GO GRAPHITE SFR","quantities":[0,0,0,0,1,0]},
-    {"name":"SAMSUNG GALAXY A56 5G EE 256GO GRAPHITE SFR","quantities":[0,3,0,0,0,0]},
-    {"name":"SAMSUNG GALAXY A57 256GO BLEU NUIT SFR","quantities":[1,1,0,0,0,0]},
-    {"name":"SAMSUNG GALAXY S24 ULTRA 5G 256GO NOIR SFR","quantities":[1,0,0,0,0,0]},
-    {"name":"SAMSUNG GALAXY S26 5G 256GO NOIR SFR","quantities":[0,0,0,1,0,0]},
-    {"name":"XIAOMI 15T 256GO NOIR SFR","quantities":[0,0,1,0,0,0]},
-    {"name":"XIAOMI REDMI NOTE 15 5G 256GO NOIR SFR-TEAM","quantities":[0,0,0,1,0,0]}
-  ]
-};
-
-let activeAgency = 'all';
-
-function init() {
-  document.getElementById('lastUpdate').textContent = STOCK_DATA.lastUpdate;
-  buildCards();
-  renderTable();
-}
-
-function buildCards() {
-  const { agencies, products } = STOCK_DATA;
-  const totals = agencies.map((_, i) => products.reduce((s, p) => s + (p.quantities[i] || 0), 0));
-  const grand = totals.reduce((a, b) => a + b, 0);
-
-  const row = document.getElementById('agencyCards');
-
-  const allCard = document.createElement('div');
-  allCard.className = 'ag-card all-card' + (activeAgency === 'all' ? ' active' : '');
-  allCard.dataset.ag = 'all';
-  allCard.innerHTML = `<div class="ag-name">Toutes</div><div class="ag-count">${grand}</div><div class="ag-label">mobiles</div>`;
-  allCard.onclick = () => setAgency('all');
-  row.appendChild(allCard);
-
-  agencies.forEach((ag, i) => {
-    const card = document.createElement('div');
-    card.className = 'ag-card' + (activeAgency === ag ? ' active' : '');
-    card.dataset.ag = ag;
-    card.innerHTML = `<div class="ag-name">${ag}</div><div class="ag-count">${totals[i]}</div><div class="ag-label">mobile${totals[i] > 1 ? 's' : ''}</div>`;
-    card.onclick = () => setAgency(ag);
-    row.appendChild(card);
-  });
-}
-
-function setAgency(ag) {
-  activeAgency = ag;
-  document.querySelectorAll('.ag-card').forEach(c => {
-    c.classList.toggle('active', c.dataset.ag === ag);
-  });
-  renderTable();
-}
-
-function renderTable() {
-  const { agencies, products } = STOCK_DATA;
-  const search = document.getElementById('search').value.toLowerCase().trim();
-  const cols = activeAgency === 'all' ? agencies.map((_, i) => i) : [agencies.indexOf(activeAgency)];
-
-  let rows = products.filter(p => {
-    if (search && !p.name.toLowerCase().includes(search)) return false;
-    if (activeAgency !== 'all' && (p.quantities[agencies.indexOf(activeAgency)] || 0) === 0) return false;
-    return true;
-  });
-
-  const total = rows.length;
-  document.getElementById('statusCount').textContent = total === 0 ? 'Aucun résultat' : `${total} modèle${total > 1 ? 's' : ''}`;
-  document.getElementById('statusLabel').textContent = activeAgency === 'all' ? '· toutes agences' : `· ${activeAgency} uniquement`;
-
-  if (rows.length === 0) {
-    document.getElementById('tableContent').innerHTML = `<div class="empty">Aucun modèle pour &laquo;&thinsp;${search}&thinsp;&raquo;</div>`;
-    return;
-  }
-
-  const showTotal = cols.length > 1;
-  const colTotals = cols.map(ci => rows.reduce((s, p) => s + (p.quantities[ci] || 0), 0));
-  const grandTotal = colTotals.reduce((a, b) => a + b, 0);
-
-  const colHeaders = cols.map(ci => `<th class="th-ag" data-ag="${agencies[ci]}">${agencies[ci]}</th>`).join('');
-
-  const tbody = rows.map(p => {
-    const cells = cols.map(ci => {
-      const q = p.quantities[ci] || 0;
-      if (q === 0) return `<td><span class="qty-zero">—</span></td>`;
-      return `<td><span class="qty-badge" data-ag="${agencies[ci]}">${q}</span></td>`;
-    }).join('');
-    const rt = cols.reduce((s, ci) => s + (p.quantities[ci] || 0), 0);
-    const totalCell = showTotal ? `<td><span class="qty-total">${rt}</span></td>` : '';
-    return `<tr><td>${p.name}</td>${cells}${totalCell}</tr>`;
-  }).join('');
-
-  const totalsRow = `<tr class="totals-row">
-    <td style="font-weight:700;">Total</td>
-    ${colTotals.map((t, idx) => `<td><span class="qty-badge" data-ag="${agencies[cols[idx]]}">${t}</span></td>`).join('')}
-    ${showTotal ? `<td><span class="qty-total">${grandTotal}</span></td>` : ''}
-  </tr>`;
-
-  document.getElementById('tableContent').innerHTML = `
-    <table>
-      <thead><tr>
-        <th style="text-align:left;width:40%;color:#64748b;">Modèle</th>
-        ${colHeaders}
-        ${showTotal ? '<th class="th-total">Total</th>' : ''}
-      </tr></thead>
-      <tbody>${tbody}${totalsRow}</tbody>
-    </table>`;
-}
-
+const STOCK_DATA = {"lastUpdate":"Vérifié le 24/06/2026 à 17:43 · Source 3GWIN 17:39","agencies":["AMBOISE","ANGERS","CHÂTEAUDUN","CHOLET","ROMORANTIN","VENDÔME"],"products":[{"name":"APPLE IPHONE 17 256GO LAVANDE SFR","quantities":[0,0,0,1,0,0]},{"name":"APPLE IPHONE 17 256GO NOIR SFR","quantities":[1,1,1,2,2,1]},{"name":"APPLE IPHONE 17 PRO 256GO BLEU INT SFR","quantities":[0,1,0,1,1,0]},{"name":"APPLE IPHONE 17E 256GO NOIR SFR-TEAM","quantities":[0,0,0,1,0,0]},{"name":"APPLE IPHONE AIR 256GO NOIR SIDERAL SFR-TEAM","quantities":[0,1,0,0,0,0]},{"name":"Box 5G recyclée version SFR SFR","quantities":[0,4,0,1,0,0]},{"name":"DORO LEVA L30 BLACK SFR","quantities":[1,1,2,1,2,1]},{"name":"DORO LEVA L30 RED SFR","quantities":[1,0,0,0,1,0]},{"name":"HONOR 400 SMART 128GO GRIS SFR","quantities":[0,1,0,0,0,0]},{"name":"HONOR 600 256GO NOIR SFR","quantities":[0,0,0,1,0,0]},{"name":"HONOR 600 LITE 256GO NOIR SFR","quantities":[0,1,0,2,1,1]},{"name":"HONOR 600 LITE 256GO VERT SFR","quantities":[0,0,0,1,0,0]},{"name":"HONOR 600 SMART 128GO NOIR SFR","quantities":[2,0,0,0,3,0]},{"name":"HONOR MAGIC 5 PRO 5G NOIR 512GO SFR","quantities":[0,0,0,0,0,1]},{"name":"HONOR MAGIC 8 LITE 256GO NOIR SFR","quantities":[0,1,0,1,0,0]},{"name":"HONOR X5C PLUS 64GO NOIR SFR","quantities":[0,2,4,2,4,1]},{"name":"HONOR X6B 128GO NOIR SFR","quantities":[0,1,0,0,0,0]},{"name":"IPHONE 13 128GO BLEU TRES BON ETAT SFR","quantities":[1,0,0,0,0,0]},{"name":"PACK MAGIC 8 LITE + HONOR HEADPHONE LITE SFR","quantities":[0,0,1,0,0,0]},{"name":"SAMSUNG GALAXY A17 5G 128GO BLEU SFR","quantities":[2,0,2,2,0,0]},{"name":"SAMSUNG GALAXY A17 5G 128GO NOIR SFR","quantities":[3,2,3,2,0,1]},{"name":"SAMSUNG GALAXY A36 5G 128GO LAVANDE SFR","quantities":[0,0,1,0,0,0]},{"name":"SAMSUNG GALAXY A37 128GO LAVANDE SFR","quantities":[1,0,0,0,1,0]},{"name":"SAMSUNG GALAXY A37 256GO GRAPHITE SFR","quantities":[0,1,2,0,1,1]},{"name":"SAMSUNG GALAXY A55 5G 128GO BLEU SFR","quantities":[1,0,0,0,0,0]},{"name":"SAMSUNG GALAXY A56 5G 256GO GRAPHITE SFR","quantities":[0,0,0,0,1,0]},{"name":"SAMSUNG GALAXY A56 5G EE 256GO GRAPHITE SFR","quantities":[0,3,0,0,0,0]},{"name":"SAMSUNG GALAXY A57 256GO BLEU NUIT SFR","quantities":[1,1,0,0,0,0]},{"name":"SAMSUNG GALAXY S24 ULTRA 5G 256GO NOIR SFR","quantities":[1,0,0,0,0,0]},{"name":"SAMSUNG GALAXY S26 5G 256GO NOIR SFR","quantities":[0,0,0,1,0,0]},{"name":"XIAOMI 15T 256GO NOIR SFR","quantities":[0,0,1,0,0,0]},{"name":"XIAOMI REDMI NOTE 15 5G 256GO NOIR SFR-TEAM","quantities":[0,0,0,1,0,0]}]};
+let activeAgency='all';
+function init(){document.getElementById('lastUpdate').textContent=STOCK_DATA.lastUpdate;buildCards();renderTable()}
+function buildCards(){const{agencies,products}=STOCK_DATA;const totals=agencies.map((_,i)=>products.reduce((s,p)=>s+(p.quantities[i]||0),0));const grand=totals.reduce((a,b)=>a+b,0);const row=document.getElementById('agencyCards');const allCard=document.createElement('div');allCard.className='ag-card all-card'+(activeAgency==='all'?' active':'');allCard.dataset.ag='all';allCard.innerHTML='<div class="ag-name">Toutes</div><div class="ag-count">'+grand+'</div><div class="ag-label">mobiles</div>';allCard.onclick=()=>setAgency('all');row.appendChild(allCard);agencies.forEach((ag,i)=>{const card=document.createElement('div');card.className='ag-card'+(activeAgency===ag?' active':'');card.dataset.ag=ag;card.innerHTML='<div class="ag-name">'+ag+'</div><div class="ag-count">'+totals[i]+'</div><div class="ag-label">mobile'+(totals[i]>1?'s':'')+'</div>';card.onclick=()=>setAgency(ag);row.appendChild(card)})}
+function setAgency(ag){activeAgency=ag;document.querySelectorAll('.ag-card').forEach(c=>{c.classList.toggle('active',c.dataset.ag===ag)});renderTable()}
+function renderTable(){const{agencies,products}=STOCK_DATA;const search=document.getElementById('search').value.toLowerCase().trim();const cols=activeAgency==='all'?agencies.map((_,i)=>i):[agencies.indexOf(activeAgency)];let rows=products.filter(p=>{if(search&&!p.name.toLowerCase().includes(search))return false;if(activeAgency!=='all'&&(p.quantities[agencies.indexOf(activeAgency)]||0)===0)return false;return true});const total=rows.length;document.getElementById('statusCount').textContent=total===0?'Aucun résultat':total+' modèle'+(total>1?'s':'');document.getElementById('statusLabel').textContent=activeAgency==='all'?'· toutes agences':'· '+activeAgency+' uniquement';if(rows.length===0){document.getElementById('tableContent').innerHTML='<div class="empty">Aucun modèle pour « '+search+' »</div>';return}const showTotal=cols.length>1;const colTotals=cols.map(ci=>rows.reduce((s,p)=>s+(p.quantities[ci]||0),0));const grandTotal=colTotals.reduce((a,b)=>a+b,0);const colHeaders=cols.map(ci=>'<th class="th-ag" data-ag="'+agencies[ci]+'">'+agencies[ci]+'</th>').join('');const tbody=rows.map(p=>{const cells=cols.map(ci=>{const q=p.quantities[ci]||0;if(q===0)return'<td><span class="qty-zero">—</span></td>';return'<td><span class="qty-badge" data-ag="'+agencies[ci]+'">'+q+'</span></td>'}).join('');const rt=cols.reduce((s,ci)=>s+(p.quantities[ci]||0),0);const totalCell=showTotal?'<td><span class="qty-total">'+rt+'</span></td>':'';return'<tr><td>'+p.name+'</td>'+cells+totalCell+'</tr>'}).join('');const totalsRow='<tr class="totals-row"><td style="font-weight:700;">Total</td>'+colTotals.map((t,idx)=>'<td><span class="qty-badge" data-ag="'+agencies[cols[idx]]+'">'+t+'</span></td>').join('')+(showTotal?'<td><span class="qty-total">'+grandTotal+'</span></td>':'')+'</tr>';document.getElementById('tableContent').innerHTML='<table><thead><tr><th style="text-align:left;width:40%;color:#64748b;">Modèle</th>'+colHeaders+(showTotal?'<th class="th-total">Total</th>':'')+'</tr></thead><tbody>'+tbody+totalsRow+'</tbody></table>'}
 init();
 </script>
 </body>
