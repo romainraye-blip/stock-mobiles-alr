@@ -2,7 +2,7 @@
 {
   "name": "Stock Mobiles Agences",
   "schemaVersion": 1,
-  "description": "Tableau de bord live des stocks mobiles pour Anjou Liaisons Radio. RÃ©cupÃ¨re les donnÃ©es depuis 3GWIN Ã  l'ouverture et se rafraÃ®chit automatiquement toutes les 5 minutes. Affiche les stocks par agence (Amboise, Angers, ChÃ¢teaudun, Cholet, Loches, Romorantin, VendÃ´me) avec filtres et recherche.",
+  "description": "Tableau de bord live des stocks mobiles pour Anjou Liaisons Radio. RÃÂ©cupÃÂ¨re les donnÃÂ©es depuis 3GWIN ÃÂ  l'ouverture et se rafraÃÂ®chit automatiquement toutes les 5 minutes. Affiche les stocks par agence (Amboise, Angers, ChÃÂ¢teaudun, Cholet, Loches, Romorantin, VendÃÂ´me) avec filtres et recherche.",
   "mcpTools": [],
   "mcpServerNames": []
 }
@@ -11,7 +11,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stock Mobiles â Anjou Liaisons Radio</title>
+<title>Stock Mobiles Ã¢ÂÂ Anjou Liaisons Radio</title>
 <style>
 :root {
   color-scheme: light;
@@ -25,7 +25,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background: #f0f2f8; color: #1a1a2e; min-height: 100vh; }
 
-/* ââ Header ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Header Ã¢ÂÂÃ¢ÂÂ */
 .header {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
   padding: 1.5rem 1.5rem 5rem;
@@ -57,7 +57,7 @@ body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background
 .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #4ade80; margin-right: 5px; animation: pulse 2s infinite; vertical-align: middle; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-/* ââ Agency cards (floating over header) ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Agency cards (floating over header) Ã¢ÂÂÃ¢ÂÂ */
 .cards-wrapper {
   margin-top: -3.5rem;
   padding: 0 1.5rem;
@@ -92,15 +92,15 @@ body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background
 .ag-card.all-card { background: #1a1a2e; color: #fff; }
 .ag-card[data-ag="AMBOISE"]    { background: #eef2ff; color: var(--amboise); }
 .ag-card[data-ag="ANGERS"]     { background: #fff7ed; color: var(--angers); }
-.ag-card[data-ag="CHÃTEAUDUN"] { background: #ecfdf5; color: var(--chateaudun); }
+.ag-card[data-ag="CHÃÂTEAUDUN"] { background: #ecfdf5; color: var(--chateaudun); }
 .ag-card[data-ag="CHOLET"]     { background: #f5f3ff; color: var(--cholet); }
 .ag-card[data-ag="ROMORANTIN"] { background: #fdf2f8; color: var(--romorantin); }
-.ag-card[data-ag="VENDÃME"]    { background: #fffbeb; color: var(--vendome); }
+.ag-card[data-ag="VENDÃÂME"]    { background: #fffbeb; color: var(--vendome); }
 
-/* ââ Main content ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Main content Ã¢ÂÂÃ¢ÂÂ */
 .main { padding: 1.25rem 1.5rem 3rem; max-width: 900px; margin: 0 auto; }
 
-/* ââ Search ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Search Ã¢ÂÂÃ¢ÂÂ */
 .search-wrap { position: relative; margin-bottom: 1rem; }
 .search-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #94a3b8; pointer-events: none; }
 .search-wrap input {
@@ -113,12 +113,12 @@ body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background
 .search-wrap input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
 .search-wrap input::placeholder { color: #cbd5e1; }
 
-/* ââ Status ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Status Ã¢ÂÂÃ¢ÂÂ */
 .statusbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
 .status-count { font-size: 12px; font-weight: 600; color: #64748b; }
 .status-label { font-size: 12px; color: #94a3b8; }
 
-/* ââ Table ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Table Ã¢ÂÂÃ¢ÂÂ */
 .table-outer { background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.07); border: 1px solid #e8eaf0; }
 .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -132,10 +132,10 @@ thead th:first-child { text-align: left; color: #64748b; }
 .th-ag { font-size: 10px; font-weight: 800; }
 .th-ag[data-ag="AMBOISE"]    { color: var(--amboise); }
 .th-ag[data-ag="ANGERS"]     { color: var(--angers); }
-.th-ag[data-ag="CHÃTEAUDUN"] { color: var(--chateaudun); }
+.th-ag[data-ag="CHÃÂTEAUDUN"] { color: var(--chateaudun); }
 .th-ag[data-ag="CHOLET"]     { color: var(--cholet); }
 .th-ag[data-ag="ROMORANTIN"] { color: var(--romorantin); }
-.th-ag[data-ag="VENDÃME"]    { color: var(--vendome); }
+.th-ag[data-ag="VENDÃÂME"]    { color: var(--vendome); }
 .th-total { color: #1a1a2e; }
 
 tbody tr { border-bottom: 1px solid #f8fafc; transition: background 0.1s; }
@@ -146,7 +146,7 @@ tbody td { padding: 9px 14px; text-align: center; }
 tbody td:first-child { text-align: left; color: #334155; font-size: 12px; line-height: 1.4; padding-right: 1rem; }
 .totals-row td { font-weight: 700; border-top: 2px solid #e8eaf0; color: #1a1a2e; }
 
-/* ââ Quantity badges ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Quantity badges Ã¢ÂÂÃ¢ÂÂ */
 .qty-badge {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 28px; height: 24px; border-radius: 8px;
@@ -155,10 +155,10 @@ tbody td:first-child { text-align: left; color: #334155; font-size: 12px; line-h
 .qty-zero { color: #e2e8f0; }
 .qty-badge[data-ag="AMBOISE"]    { background: #eef2ff; color: var(--amboise); }
 .qty-badge[data-ag="ANGERS"]     { background: #fff7ed; color: var(--angers); }
-.qty-badge[data-ag="CHÃTEAUDUN"] { background: #ecfdf5; color: var(--chateaudun); }
+.qty-badge[data-ag="CHÃÂTEAUDUN"] { background: #ecfdf5; color: var(--chateaudun); }
 .qty-badge[data-ag="CHOLET"]     { background: #f5f3ff; color: var(--cholet); }
 .qty-badge[data-ag="ROMORANTIN"] { background: #fdf2f8; color: var(--romorantin); }
-.qty-badge[data-ag="VENDÃME"]    { background: #fffbeb; color: var(--vendome); }
+.qty-badge[data-ag="VENDÃÂME"]    { background: #fffbeb; color: var(--vendome); }
 .qty-total {
   background: #1a1a2e; color: #fff;
   display: inline-flex; align-items: center; justify-content: center;
@@ -167,10 +167,10 @@ tbody td:first-child { text-align: left; color: #334155; font-size: 12px; line-h
 .totals-row .qty-badge { font-weight: 800; }
 .totals-row .qty-total { background: #1a1a2e; }
 
-/* ââ Empty state ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Empty state Ã¢ÂÂÃ¢ÂÂ */
 .empty { padding: 3rem; text-align: center; color: #94a3b8; font-size: 14px; }
 
-/* ââ Footer ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Footer Ã¢ÂÂÃ¢ÂÂ */
 .footer { text-align: center; margin-top: 2rem; font-size: 11px; color: #94a3b8; }
 </style>
 </head>
@@ -189,7 +189,7 @@ tbody td:first-child { text-align: left; color: #334155; font-size: 12px; line-h
     <div class="header-meta">
       <div class="update-badge">
         <span class="live-dot"></span>
-        <span id="lastUpdate">Chargementâ¦</span>
+        <span id="lastUpdate">ChargementÃ¢ÂÂ¦</span>
       </div>
     </div>
   </div>
@@ -206,7 +206,7 @@ tbody td:first-child { text-align: left; color: #334155; font-size: 12px; line-h
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
     </svg>
-    <input type="text" id="search" placeholder="Rechercher un modÃ¨le&hellip;" oninput="renderTable()" aria-label="Rechercher un modÃ¨le" />
+    <input type="text" id="search" placeholder="Rechercher un modÃÂ¨le&hellip;" oninput="renderTable()" aria-label="Rechercher un modÃÂ¨le" />
   </div>
 
   <div class="statusbar">
@@ -220,45 +220,44 @@ tbody td:first-child { text-align: left; color: #334155; font-size: 12px; line-h
     </div>
   </div>
 
-  <div class="footer">Source : 3GWIN &middot; Mis Ã  jour automatiquement toutes les heures</div>
+  <div class="footer">Source : 3GWIN &middot; Mis ÃÂ  jour automatiquement toutes les heures</div>
 </div>
 
 <script>
 const STOCK_DATA = {
-  "lastUpdate": "Vérifié le 25/06/2026 à 14:55 · Source 3GWIN 14:40",
+  "lastUpdate": "Vérifié le 29/06/2026 à 14:35 · Source 3GWIN 14:25",
   "agencies": ["AMBOISE","ANGERS","CHÂTEAUDUN","CHOLET","ROMORANTIN","VENDÔME"],
   "products": [
     {"name":"APPLE IPHONE 17 256GO LAVANDE SFR","quantities":[0,0,0,1,0,0]},
     {"name":"APPLE IPHONE 17 256GO NOIR SFR","quantities":[1,1,1,2,2,1]},
     {"name":"APPLE IPHONE 17 PRO 256GO BLEU INT SFR","quantities":[0,3,0,1,1,0]},
-    {"name":"APPLE IPHONE 17E 256GO NOIR SFR-TEAM","quantities":[0,0,0,1,0,0]},
+    {"name":"APPLE IPHONE 17 PRO 512GO BLEU INT SFR-TEAM","quantities":[0,1,0,0,0,0]},
     {"name":"APPLE IPHONE AIR 256GO NOIR SIDERAL SFR-TEAM","quantities":[0,1,0,0,0,0]},
-    {"name":"Box 5G recyclée version SFR SFR","quantities":[0,4,0,1,0,0]},
+    {"name":"Box 5G recyclée version SFR SFR","quantities":[2,2,0,1,0,0]},
     {"name":"DORO LEVA L30 BLACK SFR","quantities":[1,4,2,1,2,1]},
-    {"name":"DORO LEVA L30 RED SFR","quantities":[1,0,0,0,1,0]},
+    {"name":"DORO LEVA L30 RED SFR","quantities":[1,0,0,0,0,0]},
     {"name":"HONOR 400 SMART 128GO GRIS SFR","quantities":[0,1,0,0,0,0]},
     {"name":"HONOR 600 256GO NOIR SFR","quantities":[0,0,0,1,0,0]},
-    {"name":"HONOR 600 LITE 256GO NOIR SFR","quantities":[0,1,0,1,1,1]},
-    {"name":"HONOR 600 SMART 128GO NOIR SFR","quantities":[2,0,0,0,2,0]},
+    {"name":"HONOR 600 LITE 256GO NOIR SFR","quantities":[0,0,0,1,1,1]},
+    {"name":"HONOR 600 SMART 128GO NOIR SFR","quantities":[2,0,0,0,0,3]},
     {"name":"HONOR MAGIC 5 PRO 5G NOIR 512GO SFR","quantities":[0,0,0,0,0,1]},
     {"name":"HONOR MAGIC 8 LITE 256GO NOIR SFR","quantities":[0,1,0,1,0,0]},
-    {"name":"HONOR X5C PLUS 64GO NOIR SFR","quantities":[0,2,4,2,4,1]},
+    {"name":"HONOR X5C PLUS 64GO NOIR SFR","quantities":[0,2,2,0,4,2]},
     {"name":"HONOR X6B 128GO NOIR SFR","quantities":[0,1,0,0,0,0]},
     {"name":"PACK MAGIC 8 LITE + HONOR HEADPHONE LITE SFR","quantities":[0,0,1,0,0,0]},
-    {"name":"SAMSUNG GALAXY A17 5G 128GO BLEU SFR","quantities":[2,0,2,2,0,0]},
-    {"name":"SAMSUNG GALAXY A17 5G 128GO NOIR SFR","quantities":[3,1,3,2,0,0]},
+    {"name":"SAMSUNG GALAXY A17 5G 128GO BLEU SFR","quantities":[2,0,2,0,0,0]},
+    {"name":"SAMSUNG GALAXY A17 5G 128GO NOIR SFR","quantities":[2,1,3,0,0,0]},
     {"name":"SAMSUNG GALAXY A36 5G 128GO LAVANDE SFR","quantities":[0,0,1,0,0,0]},
-    {"name":"SAMSUNG GALAXY A37 128GO LAVANDE SFR","quantities":[1,0,0,0,1,0]},
+    {"name":"SAMSUNG GALAXY A37 128GO LAVANDE SFR","quantities":[0,0,0,0,1,0]},
     {"name":"SAMSUNG GALAXY A37 256GO GRAPHITE SFR","quantities":[0,1,2,0,1,1]},
     {"name":"SAMSUNG GALAXY A56 5G 256GO GRAPHITE SFR","quantities":[0,0,0,0,1,0]},
     {"name":"SAMSUNG GALAXY A56 5G EE 256GO GRAPHITE SFR","quantities":[0,3,0,0,0,0]},
-    {"name":"SAMSUNG GALAXY A57 256GO BLEU NUIT SFR","quantities":[1,1,0,0,0,0]},
+    {"name":"SAMSUNG GALAXY A57 128GO BLEU NUIT SFR-TEAM","quantities":[0,0,0,0,0,1]},
+    {"name":"SAMSUNG GALAXY A57 256GO BLEU NUIT SFR","quantities":[0,1,0,0,0,0]},
     {"name":"SAMSUNG GALAXY S26 5G 256GO NOIR SFR","quantities":[0,0,0,1,0,0]},
-    {"name":"XIAOMI 15T 256GO NOIR SFR","quantities":[0,0,1,0,0,0]},
-    {"name":"XIAOMI REDMI NOTE 15 5G 256GO NOIR SFR-TEAM","quantities":[0,0,0,1,0,0]}
+    {"name":"XIAOMI 15T 256GO NOIR SFR","quantities":[0,0,1,0,0,0]}
   ]
 };
-
 let activeAgency = 'all';
 
 function init() {
@@ -311,11 +310,11 @@ function renderTable() {
   });
 
   const total = rows.length;
-  document.getElementById('statusCount').textContent = total === 0 ? 'Aucun rÃ©sultat' : `${total} modÃ¨le${total > 1 ? 's' : ''}`;
-  document.getElementById('statusLabel').textContent = activeAgency === 'all' ? 'Â· toutes agences' : `Â· ${activeAgency} uniquement`;
+  document.getElementById('statusCount').textContent = total === 0 ? 'Aucun rÃÂ©sultat' : `${total} modÃÂ¨le${total > 1 ? 's' : ''}`;
+  document.getElementById('statusLabel').textContent = activeAgency === 'all' ? 'ÃÂ· toutes agences' : `ÃÂ· ${activeAgency} uniquement`;
 
   if (rows.length === 0) {
-    document.getElementById('tableContent').innerHTML = `<div class="empty">Aucun modÃ¨le pour &laquo;&thinsp;${search}&thinsp;&raquo;</div>`;
+    document.getElementById('tableContent').innerHTML = `<div class="empty">Aucun modÃÂ¨le pour &laquo;&thinsp;${search}&thinsp;&raquo;</div>`;
     return;
   }
 
@@ -328,7 +327,7 @@ function renderTable() {
   const tbody = rows.map(p => {
     const cells = cols.map(ci => {
       const q = p.quantities[ci] || 0;
-      if (q === 0) return `<td><span class="qty-zero">â</span></td>`;
+      if (q === 0) return `<td><span class="qty-zero">Ã¢ÂÂ</span></td>`;
       return `<td><span class="qty-badge" data-ag="${agencies[ci]}">${q}</span></td>`;
     }).join('');
     const rt = cols.reduce((s, ci) => s + (p.quantities[ci] || 0), 0);
@@ -345,7 +344,7 @@ function renderTable() {
   document.getElementById('tableContent').innerHTML = `
     <table>
       <thead><tr>
-        <th style="text-align:left;width:40%;color:#64748b;">ModÃ¨le</th>
+        <th style="text-align:left;width:40%;color:#64748b;">ModÃÂ¨le</th>
         ${colHeaders}
         ${showTotal ? '<th class="th-total">Total</th>' : ''}
       </tr></thead>
