@@ -2,7 +2,7 @@
 {
   "name": "Stock Mobiles Agences",
   "schemaVersion": 1,
-  "description": "Tableau de bord live des stocks mobiles pour Anjou Liaisons Radio. RÃÂÃÂ©cupÃÂÃÂ¨re les donnÃÂÃÂ©es depuis 3GWIN ÃÂÃÂ  l'ouverture et se rafraÃÂÃÂ®chit automatiquement toutes les 5 minutes. Affiche les stocks par agence (Amboise, Angers, ChÃÂÃÂ¢teaudun, Cholet, Loches, Romorantin, VendÃÂÃÂ´me) avec filtres et recherche.",
+  "description": "Tableau de bord live des stocks mobiles pour Anjou Liaisons Radio. Récupère les données depuis 3GWIN à l'ouverture et se rafraîchit automatiquement toutes les 5 minutes. Affiche les stocks par agence (Amboise, Angers, Châteaudun, Cholet, Loches, Romorantin, Vendôme) avec filtres et recherche.",
   "mcpTools": [],
   "mcpServerNames": []
 }
@@ -11,7 +11,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stock Mobiles ÃÂ¢ÃÂÃÂ Anjou Liaisons Radio</title>
+<title>Stock Mobiles — Anjou Liaisons Radio</title>
 <style>
 :root {
   color-scheme: light;
@@ -24,65 +24,22 @@
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background: #f0f2f8; color: #1a1a2e; min-height: 100vh; }
-
-/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Header ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
-.header {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
-  padding: 1.5rem 1.5rem 5rem;
-  position: relative;
-  overflow: hidden;
-}
-.header::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 80% 50%, rgba(99,102,241,0.18) 0%, transparent 60%),
-              radial-gradient(ellipse at 20% 80%, rgba(249,115,22,0.12) 0%, transparent 50%);
-}
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%); padding: 1.5rem 1.5rem 5rem; position: relative; overflow: hidden; }
+.header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 50%, rgba(99,102,241,0.18) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(249,115,22,0.12) 0%, transparent 50%); }
 .header-inner { position: relative; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .brand { display: flex; align-items: center; gap: 12px; }
-.brand-icon {
-  width: 44px; height: 44px; border-radius: 12px;
-  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
-  display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
-}
+.brand-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
 .brand-text h1 { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
 .brand-text p { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 2px; }
 .header-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-.update-badge {
-  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 20px; padding: 4px 12px;
-  font-size: 11px; color: rgba(255,255,255,0.6);
-  white-space: nowrap;
-}
+.update-badge { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 4px 12px; font-size: 11px; color: rgba(255,255,255,0.6); white-space: nowrap; }
 .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #4ade80; margin-right: 5px; animation: pulse 2s infinite; vertical-align: middle; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
-/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Agency cards (floating over header) ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
-.cards-wrapper {
-  margin-top: -3.5rem;
-  padding: 0 1.5rem;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
+.cards-wrapper { margin-top: -3.5rem; padding: 0 1.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .cards-wrapper::-webkit-scrollbar { display: none; }
-.cards-row {
-  display: flex; gap: 12px;
-  padding-bottom: 4px;
-  min-width: max-content;
-}
-.ag-card {
-  border-radius: 16px; padding: 16px 18px 14px;
-  min-width: 110px; text-align: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-  cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
-  position: relative; overflow: hidden;
-  border: 2px solid transparent;
-}
-.ag-card::before {
-  content: ''; position: absolute; inset: 0;
-  background: inherit; opacity: 0.12; z-index: 0;
-}
+.cards-row { display: flex; gap: 12px; padding-bottom: 4px; min-width: max-content; }
+.ag-card { border-radius: 16px; padding: 16px 18px 14px; min-width: 110px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.12); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; position: relative; overflow: hidden; border: 2px solid transparent; }
+.ag-card::before { content: ''; position: absolute; inset: 0; background: inherit; opacity: 0.12; z-index: 0; }
 .ag-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.18); }
 .ag-card.active { border-color: currentColor; transform: translateY(-2px); }
 .ag-card > * { position: relative; z-index: 1; }
@@ -92,52 +49,33 @@ body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background
 .ag-card.all-card { background: #1a1a2e; color: #fff; }
 .ag-card[data-ag="AMBOISE"]    { background: #eef2ff; color: var(--amboise); }
 .ag-card[data-ag="ANGERS"]     { background: #fff7ed; color: var(--angers); }
-.ag-card[data-ag="CHÃÂÃÂTEAUDUN"] { background: #ecfdf5; color: var(--chateaudun); }
+.ag-card[data-ag="CHÂTEAUDUN"] { background: #ecfdf5; color: var(--chateaudun); }
 .ag-card[data-ag="CHOLET"]     { background: #f5f3ff; color: var(--cholet); }
 .ag-card[data-ag="ROMORANTIN"] { background: #fdf2f8; color: var(--romorantin); }
-.ag-card[data-ag="VENDÃÂÃÂME"]    { background: #fffbeb; color: var(--vendome); }
-
-/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Main content ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
+.ag-card[data-ag="VENDÔME"]    { background: #fffbeb; color: var(--vendome); }
 .main { padding: 1.25rem 1.5rem 3rem; max-width: 900px; margin: 0 auto; }
-
-/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Search ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
 .search-wrap { position: relative; margin-bottom: 1rem; }
 .search-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #94a3b8; pointer-events: none; }
-.search-wrap input {
-  width: 100%; padding: 12px 14px 12px 40px;
-  border: 2px solid #e2e8f0; border-radius: 14px;
-  font-size: 14px; font-family: inherit; background: #fff; outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
+.search-wrap input { width: 100%; padding: 12px 14px 12px 40px; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 14px; font-family: inherit; background: #fff; outline: none; transition: border-color 0.15s, box-shadow 0.15s; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
 .search-wrap input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
 .search-wrap input::placeholder { color: #cbd5e1; }
-
-/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Status ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
 .statusbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
 .status-count { font-size: 12px; font-weight: 600; color: #64748b; }
 .status-label { font-size: 12px; color: #94a3b8; }
-
-/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Table ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
 .table-outer { background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.07); border: 1px solid #e8eaf0; }
 .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 thead tr { background: #f8fafc; }
-thead th {
-  padding: 12px 14px; font-size: 10px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.07em; border-bottom: 2px solid #f1f5f9;
-  text-align: center; white-space: nowrap;
-}
+thead th { padding: 12px 14px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; border-bottom: 2px solid #f1f5f9; text-align: center; white-space: nowrap; }
 thead th:first-child { text-align: left; color: #64748b; }
 .th-ag { font-size: 10px; font-weight: 800; }
 .th-ag[data-ag="AMBOISE"]    { color: var(--amboise); }
 .th-ag[data-ag="ANGERS"]     { color: var(--angers); }
-.th-ag[data-ag="CHÃÂÃÂTEAUDUN"] { color: var(--chateaudun); }
+.th-ag[data-ag="CHÂTEAUDUN"] { color: var(--chateaudun); }
 .th-ag[data-ag="CHOLET"]     { color: var(--cholet); }
 .th-ag[data-ag="ROMORANTIN"] { color: var(--romorantin); }
-.th-ag[data-ag="VENDÃÂÃÂME"]    { color: var(--vendome); }
+.th-ag[data-ag="VENDÔME"]    { color: var(--vendome); }
 .th-total { color: #1a1a2e; }
-
 tbody tr { border-bottom: 1px solid #f8fafc; transition: background 0.1s; }
 tbody tr:last-child { border-bottom: none; }
 tbody tr.totals-row { background: #f8faff; }
@@ -145,38 +83,34 @@ tbody tr:not(.totals-row):hover { background: #f8faff; }
 tbody td { padding: 9px 14px; text-align: center; }
 tbody td:first-child { text-align: left; color: #334155; font-size: 12px; line-height: 1.4; padding-right: 1rem; }
 .totals-row td { font-weight: 700; border-top: 2px solid #e8eaf0; color: #1a1a2e; }
-
-/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Quantity badges ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
-.qty-badge {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-width: 28px; height: 24px; border-radius: 8px;
-  font-size: 12px; font-weight: 700; padding: 0 6px;
-}
+.qty-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 24px; border-radius: 8px; font-size: 12px; font-weight: 700; padding: 0 6px; }
 .qty-zero { color: #e2e8f0; }
 .qty-badge[data-ag="AMBOISE"]    { background: #eef2ff; color: var(--amboise); }
 .qty-badge[data-ag="ANGERS"]     { background: #fff7ed; color: var(--angers); }
-.qty-badge[data-ag="CHÃÂÃÂTEAUDUN"] { background: #ecfdf5; color: var(--chateaudun); }
+.qty-badge[data-ag="CHÂTEAUDUN"] { background: #ecfdf5; color: var(--chateaudun); }
 .qty-badge[data-ag="CHOLET"]     { background: #f5f3ff; color: var(--cholet); }
 .qty-badge[data-ag="ROMORANTIN"] { background: #fdf2f8; color: var(--romorantin); }
-.qty-badge[data-ag="VENDÃÂÃÂME"]    { background: #fffbeb; color: var(--vendome); }
-.qty-total {
-  background: #1a1a2e; color: #fff;
-  display: inline-flex; align-items: center; justify-content: center;
-  min-width: 28px; height: 24px; border-radius: 8px; font-size: 12px; font-weight: 700; padding: 0 6px;
-}
+.qty-badge[data-ag="VENDÔME"]    { background: #fffbeb; color: var(--vendome); }
+.qty-total { background: #1a1a2e; color: #fff; display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 24px; border-radius: 8px; font-size: 12px; font-weight: 700; padding: 0 6px; }
 .totals-row .qty-badge { font-weight: 800; }
 .totals-row .qty-total { background: #1a1a2e; }
-
-/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Empty state ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
 .empty { padding: 3rem; text-align: center; color: #94a3b8; font-size: 14px; }
-
-/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Footer ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
 .footer { text-align: center; margin-top: 2rem; font-size: 11px; color: #94a3b8; }
+.tab-bar{display:flex;gap:6px;padding:0 1.5rem;margin-top:-2rem;position:relative;z-index:5;}
+.tab-btn{padding:9px 18px;font-size:13px;font-weight:700;border:2px solid rgba(255,255,255,0.22);cursor:pointer;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.75);border-radius:10px 10px 0 0;transition:all 0.15s;font-family:inherit;}
+.tab-btn.active{background:#f0f2f8;color:#1a1a2e;border-color:#f0f2f8;}
+.tab-btn:hover:not(.active){background:rgba(255,255,255,0.2);color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.acc-hint{padding:2.5rem 1.5rem;text-align:center;color:#94a3b8;font-size:14px;background:#fff;border-radius:18px;box-shadow:0 2px 16px rgba(0,0,0,0.07);border:1px solid #e8eaf0;}
+.acc-hint .acc-icon{font-size:2rem;display:block;margin-bottom:.6rem;}
+.acc-totals-bar{margin-top:.75rem;padding:9px 14px;background:#f8fafc;border-radius:12px;border:1px solid #e8eaf0;font-size:12px;color:#647488;text-align:center;}
+.acc-totals-bar strong{color:#1a1a2e;}
+.qty-total-val{display:inline-flex;align-items:center;justify-content:center;background:#1a1a2e;color:#fff;border-radius:7px;font-size:11px;font-weight:700;padding:2px 7px;}
+.transfer-badge{display:inline-flex;align-items:gap:3px;background:#ecfdf5;color:#059669;border-radius:6px;font-size:10px;font-weight:700;padding:1px 6px;}
 </style>
 </head>
 <body>
-
-<!-- Header -->
 <div class="header">
   <div class="header-inner">
     <div class="brand">
@@ -189,51 +123,73 @@ tbody td:first-child { text-align: left; color: #334155; font-size: 12px; line-h
     <div class="header-meta">
       <div class="update-badge">
         <span class="live-dot"></span>
-        <span id="lastUpdate">ChargementÃÂ¢ÃÂÃÂ¦</span>
+        <span id="lastUpdate">Chargement…</span>
       </div>
     </div>
   </div>
 </div>
-
-<!-- Agency summary cards -->
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="mobiles" onclick="switchTab('mobiles')">&#128241; Mobiles</button>
+  <button class="tab-btn" data-tab="accessoires" onclick="switchTab('accessoires')">&#127911; Accessoires</button>
+</div>
+<div id="tab-mobiles" class="tab-panel active">
 <div class="cards-wrapper">
   <div class="cards-row" id="agencyCards"></div>
 </div>
-
-<!-- Main -->
 <div class="main">
   <div class="search-wrap">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
     </svg>
-    <input type="text" id="search" placeholder="Rechercher un modÃÂÃÂ¨le&hellip;" oninput="renderTable()" aria-label="Rechercher un modÃÂÃÂ¨le" />
+    <input type="text" id="search" placeholder="Rechercher un modèle&hellip;" oninput="renderTable()" aria-label="Rechercher un modèle" />
   </div>
-
   <div class="statusbar">
     <span class="status-count" id="statusCount"></span>
     <span class="status-label" id="statusLabel"></span>
   </div>
-
   <div class="table-outer">
     <div class="table-scroll">
       <div id="tableContent"></div>
     </div>
   </div>
-
-  <div class="footer">Source : 3GWIN &middot; Mis ÃÂÃÂ  jour automatiquement toutes les heures</div>
+  <div class="footer">Source : 3GWIN &middot; Mis à jour automatiquement toutes les heures</div>
 </div>
-
+</div>
+<div id="tab-accessoires" class="tab-panel">
+  <div class="cards-wrapper">
+    <div class="cards-row" id="accAgencyCards"></div>
+  </div>
+  <div class="main">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="accSearch" placeholder="Rechercher : Samsung A37 · coque · chargeur · iPhone 17…" oninput="renderAcc()" aria-label="Rechercher un accessoire" />
+    </div>
+    <div class="statusbar" id="accStatusBar" style="display:none;">
+      <span class="status-count" id="accCount"></span>
+      <span class="status-label" id="accLabel"></span>
+    </div>
+    <div class="table-outer" id="accTableWrap">
+      <div class="acc-hint">
+        <span class="acc-icon">&#127911;</span>
+        Saisissez un modèle, une marque ou un type d'accessoire pour afficher les stocks compatibles.
+        <br><small style="color:#cbd5e1;margin-top:6px;display:block;">ex : Samsung A37 &nbsp;·&nbsp; coque &nbsp;·&nbsp; chargeur &nbsp;·&nbsp; iPhone 17 &nbsp;·&nbsp; NOVIANT</small>
+      </div>
+    </div>
+    <div id="accTotalsBar" style="display:none;" class="acc-totals-bar"></div>
+    <div class="footer">Source : 3GWIN &middot; Mis à jour automatiquement toutes les 30 minutes</div>
+  </div>
+</div>
 <script>
 const STOCK_DATA = {
-  "lastUpdate": "VÃ©rifiÃ© le 29/06/2026 Ã  14:35 Â· Source 3GWIN 14:25",
-  "agencies": ["AMBOISE","ANGERS","CHÃTEAUDUN","CHOLET","ROMORANTIN","VENDÃME"],
+  "lastUpdate": "Vérifié le 29/06/2026 à 15:35 · Source 3GWIN 15:32",
+  "agencies": ["AMBOISE","ANGERS","CHÂTEAUDUN","CHOLET","ROMORANTIN","VENDÔME"],
   "products": [
     {"name":"APPLE IPHONE 17 256GO LAVANDE SFR","quantities":[0,0,0,1,0,0]},
     {"name":"APPLE IPHONE 17 256GO NOIR SFR","quantities":[1,1,1,2,2,1]},
     {"name":"APPLE IPHONE 17 PRO 256GO BLEU INT SFR","quantities":[0,3,0,1,1,0]},
     {"name":"APPLE IPHONE 17 PRO 512GO BLEU INT SFR-TEAM","quantities":[0,1,0,0,0,0]},
     {"name":"APPLE IPHONE AIR 256GO NOIR SIDERAL SFR-TEAM","quantities":[0,1,0,0,0,0]},
-    {"name":"Box 5G recyclÃ©e version SFR SFR","quantities":[2,2,0,1,0,0]},
+    {"name":"Box 5G recyclée version SFR SFR","quantities":[2,2,0,1,0,0]},
     {"name":"DORO LEVA L30 BLACK SFR","quantities":[1,4,2,1,2,1]},
     {"name":"DORO LEVA L30 RED SFR","quantities":[1,0,0,0,0,0]},
     {"name":"HONOR 400 SMART 128GO GRIS SFR","quantities":[0,1,0,0,0,0]},
@@ -258,6 +214,7 @@ const STOCK_DATA = {
     {"name":"XIAOMI 15T 256GO NOIR SFR","quantities":[0,0,1,0,0,0]}
   ]
 };
+
 let activeAgency = 'all';
 
 function init() {
@@ -270,16 +227,13 @@ function buildCards() {
   const { agencies, products } = STOCK_DATA;
   const totals = agencies.map((_, i) => products.reduce((s, p) => s + (p.quantities[i] || 0), 0));
   const grand = totals.reduce((a, b) => a + b, 0);
-
   const row = document.getElementById('agencyCards');
-
   const allCard = document.createElement('div');
   allCard.className = 'ag-card all-card' + (activeAgency === 'all' ? ' active' : '');
   allCard.dataset.ag = 'all';
   allCard.innerHTML = `<div class="ag-name">Toutes</div><div class="ag-count">${grand}</div><div class="ag-label">mobiles</div>`;
   allCard.onclick = () => setAgency('all');
   row.appendChild(allCard);
-
   agencies.forEach((ag, i) => {
     const card = document.createElement('div');
     card.className = 'ag-card' + (activeAgency === ag ? ' active' : '');
@@ -302,49 +256,41 @@ function renderTable() {
   const { agencies, products } = STOCK_DATA;
   const search = document.getElementById('search').value.toLowerCase().trim();
   const cols = activeAgency === 'all' ? agencies.map((_, i) => i) : [agencies.indexOf(activeAgency)];
-
   let rows = products.filter(p => {
     if (search && !p.name.toLowerCase().includes(search)) return false;
     if (activeAgency !== 'all' && (p.quantities[agencies.indexOf(activeAgency)] || 0) === 0) return false;
     return true;
   });
-
   const total = rows.length;
-  document.getElementById('statusCount').textContent = total === 0 ? 'Aucun rÃÂÃÂ©sultat' : `${total} modÃÂÃÂ¨le${total > 1 ? 's' : ''}`;
-  document.getElementById('statusLabel').textContent = activeAgency === 'all' ? 'ÃÂÃÂ· toutes agences' : `ÃÂÃÂ· ${activeAgency} uniquement`;
-
+  document.getElementById('statusCount').textContent = total === 0 ? 'Aucun résultat' : `${total} modèle${total > 1 ? 's' : ''}`;
+  document.getElementById('statusLabel').textContent = activeAgency === 'all' ? '· toutes agences' : `· ${activeAgency} uniquement`;
   if (rows.length === 0) {
-    document.getElementById('tableContent').innerHTML = `<div class="empty">Aucun modÃÂÃÂ¨le pour &laquo;&thinsp;${search}&thinsp;&raquo;</div>`;
+    document.getElementById('tableContent').innerHTML = `<div class="empty">Aucun modèle pour &laquo;&thinsp;${search}&thinsp;&raquo;</div>`;
     return;
   }
-
   const showTotal = cols.length > 1;
   const colTotals = cols.map(ci => rows.reduce((s, p) => s + (p.quantities[ci] || 0), 0));
   const grandTotal = colTotals.reduce((a, b) => a + b, 0);
-
   const colHeaders = cols.map(ci => `<th class="th-ag" data-ag="${agencies[ci]}">${agencies[ci]}</th>`).join('');
-
   const tbody = rows.map(p => {
     const cells = cols.map(ci => {
       const q = p.quantities[ci] || 0;
-      if (q === 0) return `<td><span class="qty-zero">ÃÂ¢ÃÂÃÂ</span></td>`;
+      if (q === 0) return `<td><span class="qty-zero">—</span></td>`;
       return `<td><span class="qty-badge" data-ag="${agencies[ci]}">${q}</span></td>`;
     }).join('');
     const rt = cols.reduce((s, ci) => s + (p.quantities[ci] || 0), 0);
     const totalCell = showTotal ? `<td><span class="qty-total">${rt}</span></td>` : '';
     return `<tr><td>${p.name}</td>${cells}${totalCell}</tr>`;
   }).join('');
-
   const totalsRow = `<tr class="totals-row">
     <td style="font-weight:700;">Total</td>
     ${colTotals.map((t, idx) => `<td><span class="qty-badge" data-ag="${agencies[cols[idx]]}">${t}</span></td>`).join('')}
     ${showTotal ? `<td><span class="qty-total">${grandTotal}</span></td>` : ''}
   </tr>`;
-
   document.getElementById('tableContent').innerHTML = `
     <table>
       <thead><tr>
-        <th style="text-align:left;width:40%;color:#64748b;">ModÃÂÃÂ¨le</th>
+        <th style="text-align:left;width:40%;color:#64748b;">Modèle</th>
         ${colHeaders}
         ${showTotal ? '<th class="th-total">Total</th>' : ''}
       </tr></thead>
@@ -353,6 +299,111 @@ function renderTable() {
 }
 
 init();
+initAcc();
+
+// ── ACCESSORIES DATA ──
+const ACCESSORIES_DATA = {"lastUpdate": "Vérifié le 25/06/2026 à 15:52 · Source 3GWIN 25/06 15:47", "agencies": ["AMBOISE", "ANGERS", "CHÂTEAUDUN", "CHOLET", "ROMORANTIN", "VENDÔME"], "products": [{"name": "ADAPTATEUR BELKIN ROCKSTAR™ USB-C VERS USB-C ET JACK 3.5MM - BELKIN", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "ADAPTATEUR LIGHTNING VERS JACK 3.5 AUDIO", "quantities": [0, 0, 1, 0, 4, 0]}, {"name": "ADAPTATEUR SECTEUR 4-EN-1 CHINE / UK / US / EU - CHARGE RAPIDE 20W - 2 USB-A + 1 USB-C", "quantities": [0, 4, 0, 0, 0, 0]}, {"name": "ADAPTATEUR TYPE-C VERS JACK 3.5 AUDIO", "quantities": [6, 0, 0, 0, 0, 0]}, {"name": "ADAPTATEUR XQISIT LIGHTNING VERS MICRO USB", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "Base de chargeur allume-cigare noir 2 USB 4.8A", "quantities": [0, 5, 1, 0, 1, 0]}, {"name": "BATTERIE DE SECOURS 5.000 MAH MAGSAFE INDUCTION 15W OUT + USB-C IN / OUT + ANNEAU MAGSAFE UNIVERSEL - NOIRE - JAYM", "quantities": [4, 0, 4, 0, 2, 1]}, {"name": "CABLE BOOST CHARGE & SYNCHRO USB VERS LIGHTNING MFI 15CM BLANC - BELKIN", "quantities": [0, 4, 0, 0, 0, 0]}, {"name": "CABLE CHARGE & SYNCHRO POWER DELIVERY USB-C VERS LIGHTNING MFI 2M BLANC - JAYM®", "quantities": [0, 0, 2, 1, 3, 0]}, {"name": "CABLE ETHERNET RJ45 CAT5 2M NOIR - BELKIN", "quantities": [0, 0, 0, 0, 4, 0]}, {"name": "CABLE ETHERNET RJ45 CAT5 5M NOIR - BELKIN", "quantities": [0, 2, 2, 0, 0, 0]}, {"name": "CABLE HDMI COMPATIBLE 4K MALE / MALE 1M NOIR - BASEUS", "quantities": [0, 0, 0, 0, 7, 0]}, {"name": "Cable tressé & embout renforcé métal - 1.5m - 60W - USB-A/USB-C - NOVIANT", "quantities": [4, 0, 0, 0, 0, 0]}, {"name": "CABLE ULTRA RENFORCÉ POWER DELIVERY USB-C VERS LIGHTNING 2,5M - GARANTIE A VIE - JAYM®", "quantities": [0, 4, 0, 0, 0, 0]}, {"name": "CABLE USB VERS LIGHTNING 1.5M 2.4A NOIR - JAYM® COLLECTION POP", "quantities": [0, 0, 5, 0, 0, 0]}, {"name": "CABLE USB-C VERS LIGHTNING 1.5M 3A NOIR - JAYM® COLLECTION POP", "quantities": [0, 0, 3, 0, 2, 0]}, {"name": "Carte mémoire Samsung SD Evo 64 Go", "quantities": [0, 5, 4, 0, 0, 0]}, {"name": "Chargeur 20W USB-C V2 - NOVIANT", "quantities": [0, 3, 14, 2, 2, 10]}, {"name": "CHARGEUR A INDUCTION 15W AIMANTÉ MAGSAFE AVEC FONCTION STAND - BLANC - JAYM®", "quantities": [0, 1, 1, 1, 0, 0]}, {"name": "Chargeur allume-cigare Quick Charge noir Green_e 3.0 A", "quantities": [0, 5, 4, 0, 1, 0]}, {"name": "Chargeur Intelligent GaN 30W USB-C/A - 2 ports - NOVIANT", "quantities": [3, 1, 0, 0, 0, 0]}, {"name": "Chargeur Intelligent GaN 30W USB-C/A - 2 ports V2 - NOVIANT", "quantities": [13, 9, 11, 3, 2, 4]}, {"name": "CHARGEUR INTELLIGENT PAD A INDUCTION RAPIDE QI 10W NOIR - JAYM®", "quantities": [0, 0, 1, 2, 0, 0]}, {"name": "Chargeur maison 2.4A FastCharge Blanc - 100% Plastique recyclé Bigben", "quantities": [0, 0, 0, 3, 0, 0]}, {"name": "Chargeur Secteur Apple USB-C 20W", "quantities": [0, 0, 0, 2, 1, 0]}, {"name": "CHARGEUR SECTEUR USB-A 15W - BLANC", "quantities": [0, 1, 0, 1, 1, 0]}, {"name": "Chargeur USB A + USB C Compact 30W Power Delivery GaN Blanc + Garantie à vie Force Power Lite", "quantities": [0, 1, 6, 0, 0, 0]}, {"name": "Chargeur USB A 2.1A FastCharge Blanc WOW", "quantities": [2, 0, 0, 9, 1, 1]}, {"name": "Chargeur USB A 30W QC3.0 Blanc Bigben", "quantities": [0, 0, 0, 3, 4, 0]}, {"name": "Chargeur USB C 20W Power Delivery Blanc Bigben", "quantities": [0, 3, 1, 1, 11, 0]}, {"name": "Chargeur USB C 25W Power Delivery Blanc Bigben", "quantities": [0, 0, 0, 8, 0, 0]}, {"name": "Chargeur USB C 25W Power Delivery GaN Noir Samsung", "quantities": [0, 5, 1, 0, 0, 0]}, {"name": "Chargeur USB C 30W Power Delivery GaN Blanc + Garantie à vie - Origine France Garantie Force Power Lite", "quantities": [2, 0, 0, 0, 2, 0]}, {"name": "Chargeur USB C Wrappé 45W Power Delivery GaN Blanc Bigben", "quantities": [1, 0, 0, 0, 8, 0]}, {"name": "CHARGEUR VOITURE 1 USB 1A NOIR - JAYM®", "quantities": [1, 2, 5, 0, 0, 0]}, {"name": "CHARGEUR VOITURE 1 USB AVEC RALLONGE 1.5M ET 3 PORTS USB - BASEUS", "quantities": [0, 5, 0, 0, 0, 0]}, {"name": "CHARGEUR VOITURE 2 USB AVEC BLUETOOTH APPELS / AUDIO - BASEUS", "quantities": [0, 2, 2, 0, 0, 0]}, {"name": "Chargeur voiture USB A + USB C 32W (12+20W) Power Delivery Noir Bigben", "quantities": [2, 1, 0, 1, 0, 0]}, {"name": "COQUE BUMPER COMPATIBLE MAGSAFE POUR IPHONE 16 - BLEU - JAYM®", "quantities": [0, 2, 0, 0, 1, 0]}, {"name": "COQUE BUMPER COMPATIBLE MAGSAFE POUR IPHONE 16 - VIOLET - JAYM®", "quantities": [2, 1, 0, 0, 1, 0]}, {"name": "COQUE BUMPER COMPATIBLE MAGSAFE POUR IPHONE 16 PRO - BLEU - JAYM®", "quantities": [0, 2, 0, 0, 1, 0]}, {"name": "COQUE BUMPER COMPATIBLE MAGSAFE POUR IPHONE 16 PRO - NOIR - JAYM®", "quantities": [1, 1, 1, 0, 0, 0]}, {"name": "COQUE BUMPER COMPATIBLE MAGSAFE POUR IPHONE 16 PRO - ROSE - JAYM®", "quantities": [0, 2, 0, 0, 1, 0]}, {"name": "COQUE BUMPER POUR SAMSUNG GALAXY A16 4G / 5G - NOIR - JAYM®", "quantities": [0, 0, 0, 3, 0, 0]}, {"name": "Coque FC Feel 2M OFG Galaxy A17 4G/5G", "quantities": [0, 0, 2, 1, 0, 0]}, {"name": "Coque Google Pixel 10A Made for Google Transparente Bigben", "quantities": [2, 0, 1, 0, 0, 0]}, {"name": "Coque Honor 200 Smart Transparente Bigben", "quantities": [2, 3, 0, 3, 3, 3]}, {"name": "Coque Honor 200 Souple Transparente Bigben", "quantities": [3, 3, 6, 2, 3, 3]}, {"name": "Coque Honor 400 Lite Transparente Bigben", "quantities": [3, 1, 0, 1, 0, 3]}, {"name": "Coque Honor 400 Transparente Bigben", "quantities": [2, 4, 3, 2, 1, 1]}, {"name": "Coque Honor 600 Transparente Bigben", "quantities": [0, 0, 0, 3, 0, 0]}, {"name": "Coque Honor 70 Silisoft souple Transparente Bigben", "quantities": [0, 0, 0, 4, 0, 0]}, {"name": "COQUE HONOR MAGIC 7 LITE", "quantities": [4, 10, 1, 3, 9, 12]}, {"name": "Coque Honor Magic 7 Lite Souple Transparente Bigben", "quantities": [3, 5, 3, 0, 2, 0]}, {"name": "Coque Honor Magic 8 Lite Transparente Bigben", "quantities": [0, 0, 0, 1, 0, 2]}, {"name": "Coque Honor X6B Transparente Bigben", "quantities": [3, 0, 0, 1, 3, 0]}, {"name": "Coque iPhone 13 / 14 Transparente Bigben", "quantities": [2, 0, 2, 1, 4, 0]}, {"name": "Coque iPhone 15 Plus Transparente Bigben", "quantities": [2, 2, 2, 3, 3, 0]}, {"name": "Coque iPhone 15 Pro Transparente Bigben", "quantities": [0, 1, 3, 2, 2, 0]}, {"name": "Coque iPhone 15 Transparente Bigben", "quantities": [2, 3, 4, 4, 3, 0]}, {"name": "Coque iPhone 16 Plus Transparente Bigben", "quantities": [3, 3, 4, 3, 5, 0]}, {"name": "Coque iPhone 16 Pro Max Transparente Bigben", "quantities": [4, 3, 4, 4, 3, 0]}, {"name": "Coque iPhone 16 Pro Transparente Bigben", "quantities": [4, 3, 2, 3, 4, 0]}, {"name": "Coque iPhone 16 Transparente Bigben", "quantities": [3, 3, 0, 2, 1, 0]}, {"name": "Coque iPhone 16e Transparente Bigben", "quantities": [0, 1, 0, 0, 2, 1]}, {"name": "Coque MagSafe iPhone 17 Air Hybride Transparente Bigben", "quantities": [0, 0, 5, 0, 0, 0]}, {"name": "Coque MagSafe iPhone 17 Hybride Transparente Bigben", "quantities": [0, 0, 0, 3, 0, 0]}, {"name": "Coque MagSafe iPhone 17 Pro Hybride Transparente Bigben", "quantities": [0, 0, 0, 0, 1, 2]}, {"name": "Coque MagSafe Samsung Galaxy S25 Silicone Noire Bigben", "quantities": [0, 1, 2, 0, 0, 0]}, {"name": "COQUE RENFORCEE COMPATIBLE MAGSAFE DROP TEST 2M POUR APPLE IPHONE 15 - JAYM®", "quantities": [0, 0, 0, 0, 3, 0]}, {"name": "COQUE RENFORCEE COMPATIBLE MAGSAFE DROP TEST 2M POUR APPLE IPHONE 15 PRO - JAYM®", "quantities": [1, 1, 1, 0, 0, 0]}, {"name": "COQUE RENFORCEE COMPATIBLE MAGSAFE DROP TEST 2M POUR APPLE IPHONE 15 PRO MAX - JAYM®", "quantities": [1, 1, 0, 1, 0, 0]}, {"name": "COQUE RENFORCEE COMPATIBLE MAGSAFE DROP TEST 2M POUR APPLE IPHONE 16 PLUS - JAYM®", "quantities": [1, 1, 1, 1, 0, 0]}, {"name": "COQUE RENFORCEE COMPATIBLE MAGSAFE DROP TEST 2M POUR APPLE IPHONE 16 PRO - JAYM®", "quantities": [2, 0, 3, 0, 1, 0]}, {"name": "COQUE RENFORCEE COMPATIBLE MAGSAFE DROP TEST 2M POUR APPLE IPHONE 16 PRO MAX - JAYM®", "quantities": [0, 0, 3, 0, 2, 0]}, {"name": "COQUE RENFORCEE DROP TEST 2M COMPATIBLE APPLE IPHONE 15 - JAYM®", "quantities": [7, 2, 0, 2, 4, 0]}, {"name": "COQUE RENFORCEE DROP TEST 2M COMPATIBLE APPLE IPHONE 16 PRO - JAYM®", "quantities": [1, 0, 0, 2, 0, 0]}, {"name": "COQUE RENFORCEE DROP TEST 2M COMPATIBLE APPLE IPHONE 16 PRO MAX - JAYM®", "quantities": [0, 0, 2, 1, 0, 0]}, {"name": "COQUE RENFORCEE DROP TEST 2M COMPATIBLE HONOR 200 SMART - JAYM®", "quantities": [0, 3, 0, 0, 0, 2]}, {"name": "COQUE RENFORCEE DROP TEST 2M COMPATIBLE HONOR 400 LITE - JAYM®", "quantities": [1, 2, 0, 0, 0, 0]}, {"name": "COQUE RENFORCEE DROP TEST 2M COMPATIBLE HONOR MAGIC 7 LITE - JAYM®", "quantities": [4, 0, 1, 0, 0, 0]}, {"name": "COQUE RENFORCEE DROP TEST 2M COMPATIBLE SAMSUNG GALAXY A05S - JAYM®", "quantities": [1, 0, 0, 0, 3, 0]}, {"name": "COQUE RENFORCEE DROP TEST 2M COMPATIBLE SAMSUNG GALAXY A36 5G - JAYM®", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "COQUE RENFORCEE DROP TEST 2M COMPATIBLE SAMSUNG GALAXY S24 - JAYM®", "quantities": [0, 0, 3, 0, 2, 0]}, {"name": "COQUE RENFORCEE DROP TEST 2M COMPATIBLE SAMSUNG GALAXY S24 FE - JAYM®", "quantities": [1, 3, 0, 3, 2, 0]}, {"name": "COQUE RENFORCEE DROP TEST 2M COMPATIBLE SAMSUNG GALAXY S25 ULTRA - JAYM®", "quantities": [0, 0, 2, 2, 0, 0]}, {"name": "COQUE RENFORCEE DROP TEST 2M POUR XIAOMI 14 - JAYM®", "quantities": [0, 0, 3, 0, 0, 0]}, {"name": "COQUE RENFORCEE DROP TEST 2M POUR XIAOMI 14T PRO - JAYM®", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "COQUE RENFORCEE NOIRE SUPERGRIP POUR SAMSUNG GALAXY Z FOLD 6", "quantities": [2, 0, 1, 0, 0, 1]}, {"name": "Coque renforcée Crystal Magsafe Iphone 15 (compatible IP13/14/16e/17e)- NOVIANT", "quantities": [0, 0, 0, 3, 0, 2]}, {"name": "Coque renforcée Crystal Magsafe Iphone 16e/17e - NOVIANT", "quantities": [0, 0, 0, 0, 0, 3]}, {"name": "Coque renforcée Crystal Magsafe Iphone 17 - NOVIANT", "quantities": [1, 0, 2, 3, 2, 3]}, {"name": "Coque renforcée Crystal Magsafe Iphone 17 Pro - NOVIANT", "quantities": [0, 3, 1, 0, 0, 0]}, {"name": "Coque renforcée Crystal Magsafe Iphone 17 Pro Max - NOVIANT", "quantities": [0, 2, 0, 0, 0, 0]}, {"name": "Coque renforcée Crystal Magsafe Samsung S26 - NOVIANT", "quantities": [0, 3, 0, 1, 0, 1]}, {"name": "Coque renforcée Crystal Samsung Galaxy A17 - NOVIANT", "quantities": [0, 5, 2, 0, 0, 1]}, {"name": "Coque renforcée Crystal Samsung Galaxy A37 - NOVIANT", "quantities": [2, 0, 3, 1, 0, 7]}, {"name": "Coque renforcée Crystal Samsung Galaxy A57 - NOVIANT", "quantities": [2, 0, 2, 2, 0, 5]}, {"name": "Coque Renforcée Honor 200 FEEL Transparent - Garantie à vie - Certifié GRS Force Case", "quantities": [2, 2, 2, 3, 2, 2]}, {"name": "Coque renforcée Honor 200 Smart FEEL 2m Transparente + Garantie à vie - Certifié GRS Force Case", "quantities": [3, 3, 2, 1, 6, 3]}, {"name": "Coque renforcée Honor 400 FEEL 2m Transparente + Garantie à vie - Certifié GRS Force Case", "quantities": [1, 0, 1, 0, 3, 0]}, {"name": "Coque renforcée Honor 600 Lite FEEL 2m Transparente + Garantie à vie Force Case", "quantities": [0, 2, 4, 0, 1, 1]}, {"name": "Coque renforcée Honor 600 Smart FEEL Origine France Garantie 2m Transparente + Garantie à vie - Vrac B2B - Origine France Garantie Force Case", "quantities": [4, 7, 0, 1, 2, 0]}, {"name": "Coque renforcée Honor Honor 400S FEEL 2m Transparente + Garantie à vie Force Case", "quantities": [4, 4, 5, 0, 11, 3]}, {"name": "Coque renforcée Honor Magic 7 Lite AIR 3m Transparente + Garantie à vie Force Case", "quantities": [3, 4, 0, 0, 0, 0]}, {"name": "Coque renforcée Honor Magic 8 Lite AIR 3m Transparente + Garantie à vie Force Case", "quantities": [0, 0, 4, 0, 4, 2]}, {"name": "Coque renforcée Honor X5C Plus FEEL 2m Transparente + Garantie à vie Force Case", "quantities": [4, 5, 3, 3, 8, 1]}, {"name": "Coque renforcée iPhone 15 Plus PULSE Origine France Garantie 3m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [2, 2, 3, 2, 2, 0]}, {"name": "Coque renforcée iPhone 15 PULSE Origine France Garantie 3m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [4, 1, 0, 0, 2, 0]}, {"name": "Coque renforcée iPhone 16 FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [1, 2, 0, 0, 0, 0]}, {"name": "Coque renforcée iPhone 16 Plus FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [3, 3, 4, 3, 4, 0]}, {"name": "Coque renforcée iPhone 16 Pro FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [6, 2, 1, 0, 3, 0]}, {"name": "Coque renforcée iPhone 16 Pro Max FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [3, 3, 2, 5, 3, 0]}, {"name": "Coque renforcée iPhone 16e FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [2, 3, 2, 1, 8, 0]}, {"name": "Coque renforcée iPhone 17 Air FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [1, 1, 0, 0, 2, 0]}, {"name": "Coque renforcée iPhone 17 FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [5, 2, 1, 1, 2, 0]}, {"name": "Coque renforcée iPhone 17 Pro FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [2, 1, 1, 0, 1, 1]}, {"name": "Coque renforcée iPhone 17 Pro Max FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [2, 1, 2, 0, 0, 2]}, {"name": "Coque renforcée iPhone 17 Pro Max PULSE Origine France Garantie 3m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [3, 0, 1, 1, 0, 0]}, {"name": "Coque renforcée Magnet Samsung Paradigm Slim AIR Frost 3m Noire + Garantie à vie Force Case", "quantities": [5, 1, 2, 2, 1, 2]}, {"name": "Coque renforcée MagSafe iPhone 15 AIR 3m Transparente + Garantie à vie Force Case", "quantities": [2, 0, 1, 0, 1, 0]}, {"name": "Coque renforcée MagSafe iPhone 15 Plus AIR 3m Transparente + Garantie à vie Force Case", "quantities": [1, 1, 1, 2, 1, 0]}, {"name": "Coque renforcée MagSafe iPhone 16 AIR 3m Transparente + Garantie à vie Force Case", "quantities": [0, 1, 2, 0, 0, 0]}, {"name": "Coque renforcée MagSafe iPhone 16 Plus AIR 3m Transparente + Garantie à vie Force Case", "quantities": [2, 2, 3, 2, 2, 0]}, {"name": "Coque renforcée MagSafe iPhone 16 Plus AIR 3m Transparente avec Paillettes + Garantie à vie Force Case", "quantities": [1, 2, 3, 3, 1, 0]}, {"name": "Coque renforcée MagSafe iPhone 16 Plus AIR Frost 3m Noire + Garantie à vie Force Case", "quantities": [2, 2, 3, 3, 2, 0]}, {"name": "Coque renforcée MagSafe iPhone 16 Pro AIR 3m Transparente + Garantie à vie Force Case", "quantities": [3, 0, 1, 0, 1, 0]}, {"name": "Coque renforcée MagSafe iPhone 16 Pro AIR 3m Transparente avec Paillettes + Garantie à vie Force Case", "quantities": [2, 4, 1, 1, 0, 0]}, {"name": "Coque renforcée MagSafe iPhone 16 Pro AIR Frost 3m Noire + Garantie à vie Force Case", "quantities": [2, 0, 2, 0, 1, 0]}, {"name": "Coque renforcée MagSafe iPhone 16 Pro Max AIR 3m Transparente + Garantie à vie Force Case", "quantities": [2, 2, 4, 0, 3, 0]}, {"name": "Coque renforcée MagSafe iPhone 16 Pro Max AIR 3m Transparente avec Paillettes + Garantie à vie Force Case", "quantities": [3, 2, 2, 1, 2, 0]}, {"name": "Coque renforcée MagSafe iPhone 16 Pro Max AIR Frost 3m Noire + Garantie à vie Force Case", "quantities": [3, 2, 2, 2, 2, 0]}, {"name": "Coque renforcée MagSafe iPhone 16e AIR Frost 3m Noire + Garantie à vie Force Case", "quantities": [0, 1, 0, 0, 2, 0]}, {"name": "Coque renforcée MagSafe iPhone 16e AIR Origine France Garantie 3m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [6, 0, 0, 0, 0, 0]}, {"name": "Coque renforcée MagSafe iPhone 17 AIR XTREM 4m Norme Militaire MIL-STD 810G Transparente + Garantie à vie Force Case", "quantities": [4, 0, 0, 0, 0, 1]}, {"name": "Coque renforcée MagSafe iPhone 17 AIR XTREM 4m Norme Militaire MIL-STD 810G Transparente avec Paillettes + Garantie à vie Force Case", "quantities": [0, 0, 0, 4, 0, 0]}, {"name": "Coque renforcée MagSafe iPhone 17 Pro AIR Origine France Garantie 3m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [4, 0, 0, 1, 1, 0]}, {"name": "Coque renforcée MagSafe iPhone 17 Pro AIR XTREM 4m Norme Militaire MIL-STD 810G Transparente avec Paillettes + Garantie à vie Force Case", "quantities": [1, 0, 0, 0, 3, 1]}, {"name": "Coque renforcée MagSafe iPhone 17 Pro Max AIR XTREM 4m Norme Militaire MIL-STD 810G Transparente + Garantie à vie Force Case", "quantities": [0, 0, 0, 0, 1, 2]}, {"name": "Coque renforcée MagSafe Samsung Miracle 2 AIR XTREM 4m Norme Militaire MIL-STD 810G Transparente + Garantie à vie Force Case", "quantities": [3, 0, 0, 0, 0, 0]}, {"name": "Coque renforcée noir Matt Iron Magsafe Iphone 17 - NOVIANT", "quantities": [0, 3, 2, 0, 3, 0]}, {"name": "Coque renforcée noir Matt Iron Magsafe Iphone 17 Pro - NOVIANT", "quantities": [0, 3, 1, 0, 3, 0]}, {"name": "Coque renforcée noir Matt Iron Magsafe Iphone 17 Pro Max - NOVIANT", "quantities": [0, 1, 0, 0, 2, 0]}, {"name": "Coque renforcée noir Matt Iron Magsafe Samsung S26 - NOVIANT", "quantities": [0, 0, 3, 0, 0, 0]}, {"name": "Coque renforcée Oppo A17 FEEL 2m Transparente + Garantie à vie Force Case", "quantities": [5, 0, 0, 0, 0, 0]}, {"name": "Coque Renforcée PURE Garantie à vie Transparente pour Oppo A16 / A16S / A54S Force Case", "quantities": [5, 0, 0, 0, 0, 0]}, {"name": "Coque renforcée Samsung Galaxy A05s FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [2, 0, 1, 0, 3, 0]}, {"name": "Coque renforcée Samsung Galaxy A16 4G / A16 5G FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [0, 0, 2, 2, 3, 0]}, {"name": "Coque renforcée Samsung Galaxy A17 4G/5G FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [5, 6, 0, 0, 1, 4]}, {"name": "Coque renforcée Samsung Galaxy A36 5G / A56 5G FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [0, 5, 2, 0, 6, 0]}, {"name": "Coque renforcée Samsung Galaxy A37 5G AIR 3m Transparente + Garantie à vie Force Case", "quantities": [2, 0, 3, 0, 2, 0]}, {"name": "Coque renforcée Samsung Galaxy A37 5G FEEL 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [0, 1, 0, 0, 1, 2]}, {"name": "Coque renforcée Samsung Galaxy A57 5G FEEL 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [3, 1, 1, 0, 2, 2]}, {"name": "Coque renforcée Samsung Galaxy S24 AIR 3m Transparente + Garantie à vie Force Case", "quantities": [1, 1, 3, 1, 2, 0]}, {"name": "Coque renforcée Samsung Galaxy S24 FE FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [6, 1, 0, 0, 5, 0]}, {"name": "Coque renforcée Samsung Galaxy S25 FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [1, 1, 2, 0, 0, 0]}, {"name": "Coque renforcée Samsung Galaxy S25 Ultra FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [7, 1, 4, 2, 6, 0]}, {"name": "Coque renforcée Samsung Galaxy S25+ FEEL Origine France Garantie 2m Transparente + Garantie à vie - Origine France Garantie Force Case", "quantities": [3, 2, 4, 1, 7, 0]}, {"name": "Coque renforcée Samsung Galaxy Z Flip 6/7 FE DUO 2m Transparente + Garantie à vie Force Case", "quantities": [2, 0, 0, 1, 0, 0]}, {"name": "Coque renforcée Samsung Paradigm Slim AIR 3m Transparente + Garantie à vie Force Case", "quantities": [0, 4, 3, 5, 3, 0]}, {"name": "Coque renforcée Samsung R13 FEEL Origine France Garantie 2m Transparente + Garantie à vie - Certifié GRS Force Case", "quantities": [1, 0, 1, 0, 1, 0]}, {"name": "Coque renforcée Xiaomi Redmi 14C 4G FEEL 2m Transparente + Garantie à vie - Certifié GRS Force Case", "quantities": [6, 3, 3, 2, 0, 3]}, {"name": "Coque Renforcée Xiaomi Redmi Note 14 4G FEEL Transparente - Garantie à vie - Certifié GRS Force Case", "quantities": [3, 3, 2, 4, 3, 3]}, {"name": "Coque renforcée Xiaomi Redmi Note 14 5G FEEL Origine France Garantie 2m Transparente + Garantie à vie - Certifié GRS Force Case", "quantities": [2, 1, 3, 2, 2, 3]}, {"name": "Coque renforcée Xiaomi Redmi Note 14 Pro + 5G FEEL Origine France Garantie 2m Transparente + Garantie à vie - Certifié GRS Force Case", "quantities": [1, 3, 0, 2, 3, 3]}, {"name": "Coque renforcée Xiaomi Redmi Note 14 Pro 5G FEEL Origine France Garantie 2m Transparente + Garantie à vie - Certifié GRS Force Case", "quantities": [2, 3, 3, 1, 0, 3]}, {"name": "Coque Samsung G S24 Souple Transparente Bigben", "quantities": [2, 2, 2, 3, 4, 0]}, {"name": "Coque Samsung Galaxy A05s Transparente Bigben", "quantities": [3, 2, 0, 2, 1, 0]}, {"name": "Coque Samsung Galaxy A16 4G / A16 5G Transparente Bigben", "quantities": [0, 1, 0, 5, 4, 0]}, {"name": "Coque Samsung Galaxy A17 4G/5G Transparente Bigben", "quantities": [0, 0, 2, 2, 5, 0]}, {"name": "Coque Samsung Galaxy A26 Transparente Bigben", "quantities": [0, 1, 2, 2, 4, 1]}, {"name": "Coque Samsung Galaxy A36 5G / A56 5G Transparente Bigben", "quantities": [1, 4, 0, 0, 7, 2]}, {"name": "Coque Samsung Galaxy A37 5G Transparente Bigben", "quantities": [2, 0, 0, 2, 0, 0]}, {"name": "Coque Samsung Galaxy S24 FE Transparente Bigben", "quantities": [6, 3, 1, 3, 3, 0]}, {"name": "Coque Samsung Galaxy S25 Edge Transparente Bigben", "quantities": [9, 3, 6, 3, 3, 0]}, {"name": "Coque Samsung Galaxy S25 Transparente Bigben", "quantities": [0, 4, 2, 2, 1, 1]}, {"name": "Coque Samsung Galaxy S25 Ultra Transparente Bigben", "quantities": [3, 3, 2, 3, 2, 1]}, {"name": "Coque Samsung Galaxy S25+ Transparente Bigben", "quantities": [3, 3, 3, 3, 4, 2]}, {"name": "Coque Samsung Galaxy S26 Transparente Bigben", "quantities": [2, 0, 0, 1, 0, 0]}, {"name": "Coque Samsung R13 Transparente Bigben", "quantities": [2, 0, 0, 1, 3, 0]}, {"name": "Coque Silisoft souple Transparente pour iPhone 13 Bigben", "quantities": [2, 0, 2, 2, 1, 0]}, {"name": "COQUE SOUPLE COMPATIBLE GOOGLE PIXEL 9 / 9 PRO 5G - JAYM®", "quantities": [0, 2, 4, 0, 0, 0]}, {"name": "COQUE SOUPLE COMPATIBLE HONOR 200 5G - JAYM®", "quantities": [4, 4, 0, 0, 0, 2]}, {"name": "COQUE SOUPLE COMPATIBLE POUR IPHONE 15 PLUS - JAYM®", "quantities": [0, 2, 2, 0, 0, 0]}, {"name": "COQUE SOUPLE COMPATIBLE POUR SAMSUNG GALAXY A55 5G - JAYM®", "quantities": [1, 1, 0, 1, 0, 0]}, {"name": "COQUE SOUPLE COMPATIBLE POUR SAMSUNG GALAXY S24 - JAYM®", "quantities": [0, 0, 0, 3, 0, 0]}, {"name": "COQUE SOUPLE COMPATIBLE SAMSUNG GALAXY A06 - JAYM®", "quantities": [0, 2, 0, 0, 2, 0]}, {"name": "COQUE SOUPLE COMPATIBLE SAMSUNG GALAXY A16 4G / 5G - JAYM®", "quantities": [4, 0, 0, 0, 0, 0]}, {"name": "COQUE SOUPLE COMPATIBLE XIAOMI 12 PRO - JAYM®", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "COQUE SOUPLE COMPATIBLE XIAOMI 14T - JAYM®", "quantities": [0, 0, 2, 0, 0, 2]}, {"name": "COQUE SOUPLE TRANSPARENTE COMPATIBLE HONOR 400 LITE - JAYM®", "quantities": [0, 0, 3, 0, 0, 0]}, {"name": "COQUE SOUPLE TRANSPARENTE COMPATIBLE HONOR MAGIC 7 LITE - JAYM®", "quantities": [1, 0, 0, 1, 3, 0]}, {"name": "Coque transparente Redmi 15C 4G/5G", "quantities": [3, 0, 0, 0, 0, 0]}, {"name": "Coque Xiaomi 15T Transparente Bigben", "quantities": [0, 0, 2, 1, 0, 0]}, {"name": "Coque Xiaomi Redmi A3 Transparente Bigben", "quantities": [3, 3, 0, 3, 2, 0]}, {"name": "Coque Xiaomi Redmi A5 Transparente Bigben", "quantities": [0, 3, 2, 3, 1, 0]}, {"name": "Coque Xiaomi Redmi Note 14 4G Souple Transparente Bigben", "quantities": [4, 3, 3, 2, 7, 3]}, {"name": "Coque Xiaomi Redmi Note 14 5G Transparente Bigben", "quantities": [3, 5, 5, 0, 0, 5]}, {"name": "Coque Xiaomi Redmi Note 14 Pro + 5G Transparente Bigben", "quantities": [3, 3, 3, 2, 3, 3]}, {"name": "Coque Xiaomi Redmi Note 14 Pro 5G Transparente Bigben", "quantities": [1, 3, 3, 2, 3, 3]}, {"name": "Câble optique Bigben noir", "quantities": [0, 0, 5, 0, 0, 0]}, {"name": "Câble Renforcé USB A / Lightning 2.4A 2m FastCharge Blanc + Garantie à vie Force Power Lite", "quantities": [0, 2, 2, 0, 0, 0]}, {"name": "Câble Renforcé USB A / USB C 3A 2m PD 60W Blanc + Garantie à vie Force Power Lite", "quantities": [0, 0, 4, 0, 0, 0]}, {"name": "Câble Renforcé USB C / Lightning 3A 1.2m PD 60W Blanc + Garantie à vie Force Power Lite", "quantities": [0, 3, 0, 0, 1, 0]}, {"name": "Câble Renforcé USB C / USB C 3A 1.2m PD 60W Blanc + Garantie à vie Force Power Lite", "quantities": [4, 0, 0, 0, 0, 0]}, {"name": "Câble TPE USB-C vers USB-C (1.2M) - NOVIANT", "quantities": [0, 0, 0, 0, 4, 8]}, {"name": "Câble tressé fin USB-C vers USB-C (1.5M) 60W - NOVIANT", "quantities": [0, 0, 0, 3, 0, 1]}, {"name": "Câble USB A / Lightning 2.4A 2m FastCharge 12W Noir Bigben", "quantities": [4, 0, 0, 0, 0, 0]}, {"name": "Câble USB A / Lightning 2.4A 50cm FastCharge 12W Blanc Bigben", "quantities": [5, 0, 0, 2, 0, 0]}, {"name": "Câble USB A / USB C 3A 1.2m FastCharge 15W Noir Bigben", "quantities": [2, 0, 4, 0, 0, 0]}, {"name": "Câble USB A / USB C 3A 2m FastCharge Noir Bigben", "quantities": [0, 7, 0, 0, 0, 0]}, {"name": "Câble USB C / Lightning 3A 1.2m PD 60W Blanc Bigben", "quantities": [5, 0, 0, 0, 0, 0]}, {"name": "Câble USB C / Lightning 3A 1.2m PD 60W Noir Bigben", "quantities": [0, 5, 0, 0, 0, 0]}, {"name": "Câble USB C / USB C 3A 2m PD 60W Noir Bigben", "quantities": [3, 1, 0, 0, 0, 0]}, {"name": "Câble USB C / USB C 3A 50cm PD 60W Noir Bigben", "quantities": [3, 0, 2, 0, 0, 0]}, {"name": "Ecouteurs Play I True Wireless Bouton Blanc + Garantie à vie Force Play", "quantities": [0, 0, 0, 0, 3, 0]}, {"name": "Ecouteurs Play Touch XL True Wireless ANC Ecran tactile 1.65\" Intra-auriculaire Blanc + Garantie à vie Force Play", "quantities": [0, 0, 3, 1, 0, 1]}, {"name": "Ecouteurs Puresound ANC - NOVIANT", "quantities": [1, 0, 0, 0, 0, 3]}, {"name": "Ecouteurs Renforcé USB C Télécommande/Micro Bouton Blanc + Garantie à vie Force Play", "quantities": [0, 1, 3, 1, 1, 0]}, {"name": "ECOUTEURS TRUE WIRELESS BLUETOOTH 5.0 + EDR - MAGELLAN S12 - BLANCS", "quantities": [1, 0, 2, 0, 0, 0]}, {"name": "ECOUTEURS TRUE WIRELESS PREMIUM SOUNDFORM BOLT - LONGUE AUTONOMIE - BLANCS - BELKIN", "quantities": [0, 7, 0, 0, 1, 1]}, {"name": "Ecouteurs U025 USB C Intra-auriculaire Designed for Samsung Blanc Samsung", "quantities": [3, 0, 0, 0, 0, 0]}, {"name": "ENCEINTE BLUETOOTH 5.3 PORTABLE 5W - SPLASH PROOF IPX4 - LONGUE AUTONOMIE 16H - LEDWOOD XS40 - BLEUE", "quantities": [0, 5, 0, 0, 0, 1]}, {"name": "ENCEINTE BLUETOOTH 5.3 PORTABLE 5W - SPLASH PROOF IPX4 - LONGUE AUTONOMIE 16H - LEDWOOD XS40 - NOIRE", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "ENCEINTE BLUETOOTH PORTABLE 5W + MICRO SD BLEU PETROLE - MUSE", "quantities": [2, 1, 0, 0, 0, 1]}, {"name": "Enceinte sans fil Bluetooth de salon Aura Studio 2 Harman noire", "quantities": [6, 0, 0, 0, 0, 0]}, {"name": "Etui Flip Wallet noir Galaxy A17 4G/5G", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "Etui Folio Clear View Cover Noir pour Samsung G S24 ULTRA Samsung", "quantities": [0, 1, 0, 2, 1, 0]}, {"name": "Etui folio noir BBC Honor X5C Plus", "quantities": [0, 2, 1, 4, 0, 0]}, {"name": "ETUI FOLIO STAND MAGNETIQUE NOIR COMPATIBLE APPLE IPHONE 15 PRO MAX - JAYM®", "quantities": [0, 0, 1, 2, 0, 0]}, {"name": "ETUI FOLIO STAND MAGNETIQUE NOIR COMPATIBLE APPLE IPHONE 16 PRO - JAYM®", "quantities": [0, 2, 0, 0, 2, 0]}, {"name": "ETUI FOLIO STAND MAGNETIQUE NOIR COMPATIBLE APPLE IPHONE 16 PRO MAX - JAYM®", "quantities": [0, 1, 0, 0, 2, 0]}, {"name": "ETUI FOLIO STAND MAGNETIQUE NOIR COMPATIBLE HONOR 200 5G - JAYM®", "quantities": [2, 1, 0, 0, 0, 0]}, {"name": "ETUI FOLIO STAND MAGNETIQUE NOIR COMPATIBLE HONOR 200 SMART 5G - JAYM®", "quantities": [0, 2, 0, 0, 0, 2]}, {"name": "ETUI FOLIO STAND MAGNETIQUE NOIR COMPATIBLE HONOR MAGIC 7 LITE - JAYM®", "quantities": [1, 2, 0, 0, 0, 0]}, {"name": "ETUI FOLIO STAND MAGNETIQUE NOIR COMPATIBLE SAMSUNG GALAXY A06 - JAYM®", "quantities": [1, 1, 0, 0, 1, 0]}, {"name": "ETUI FOLIO STAND MAGNETIQUE NOIR COMPATIBLE SAMSUNG GALAXY S24 FE - JAYM®", "quantities": [1, 0, 0, 1, 2, 0]}, {"name": "ETUI FOLIO STAND MAGNETIQUE NOIR COMPATIBLE SAMSUNG GALAXY S24 PLUS - JAYM®", "quantities": [0, 2, 0, 1, 0, 0]}, {"name": "ETUI FOLIO STAND MAGNETIQUE NOIR COMPATIBLE SAMSUNG GALAXY S25 - JAYM®", "quantities": [2, 0, 0, 1, 0, 0]}, {"name": "Etui Folio Wallet Samsung G S24 Support vidéo Noir - 65% Plastique recyclé Certifié GRS Bigben", "quantities": [2, 2, 4, 1, 3, 0]}, {"name": "Etui Folio Wallet Samsung Galaxy A05s Support vidéo Noir - 65% Plastique recyclé Certifié GRS Bigben", "quantities": [3, 4, 0, 2, 0, 0]}, {"name": "ETUI UNIVERSEL HORIZONTAL CLIP CEINTURE TAILLE XXL NOIR JAYM - BULK", "quantities": [0, 0, 3, 0, 0, 0]}, {"name": "FILM CONFIDENTIALITE", "quantities": [0, 14, 0, 7, 4, 0]}, {"name": "Film de découpe Flexible auto réparateur compatible avec écrans incurvés - NOVIANT", "quantities": [20, 12, 18, 30, 7, 18]}, {"name": "Film de découpe HD - NOVIANT", "quantities": [23, 11, 5, 3, 6, 0]}, {"name": "Film de découpe Vision Glass 6H - NOVIANT", "quantities": [19, 61, 65, 37, 2, 22]}, {"name": "Film de découpe Vision Glass 6H Privacy - NOVIANT", "quantities": [9, 17, 19, 4, 6, 35]}, {"name": "Film de découpe Vision Glass Nano 9H certifié SGS- NOVIANT", "quantities": [10, 35, 40, 14, 7, 48]}, {"name": "Film de protection plug and use", "quantities": [18, 21, 0, 5, 14, 15]}, {"name": "Film de protection plug and use MAT", "quantities": [29, 11, 0, 3, 0, 6]}, {"name": "Film de protection plug and use TABLETTE", "quantities": [0, 10, 0, 0, 0, 0]}, {"name": "Folio Honor 200 Smart Wallet Fonction Stand Rouge - Certifié GRS Bigben", "quantities": [3, 2, 0, 2, 2, 2]}, {"name": "Folio Honor 400 Lite Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [1, 0, 0, 4, 1, 0]}, {"name": "Folio Honor 400 Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [0, 1, 3, 1, 2, 1]}, {"name": "Folio Honor 600 Smart Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [4, 4, 0, 3, 3, 0]}, {"name": "Folio Honor 600 Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [0, 0, 0, 2, 3, 0]}, {"name": "Folio Honor Honor 400S Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [5, 1, 1, 3, 0, 3]}, {"name": "Folio Honor Magic 8 Lite Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [0, 0, 4, 0, 0, 0]}, {"name": "Folio Honor X5C Plus Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [0, 0, 0, 0, 7, 3]}, {"name": "Folio iPhone 14 Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [0, 0, 0, 0, 5, 0]}, {"name": "Folio iPhone 15 Plus Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [1, 1, 1, 1, 2, 0]}, {"name": "Folio iPhone 15 Pro Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [3, 0, 1, 1, 0, 0]}, {"name": "Folio iPhone 15 Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [0, 0, 3, 0, 3, 0]}, {"name": "Folio iPhone 16 Plus Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [4, 2, 2, 1, 2, 0]}, {"name": "Folio iPhone 16 Pro Max Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [0, 4, 2, 1, 2, 0]}, {"name": "Folio iPhone 16 Pro Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [2, 3, 2, 1, 2, 0]}, {"name": "Folio iPhone 16 Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [1, 4, 2, 0, 1, 0]}, {"name": "Folio iPhone 16e Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [4, 2, 3, 0, 1, 0]}, {"name": "Folio iPhone 17 Air Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [0, 3, 0, 0, 1, 0]}, {"name": "Folio iPhone 17 Pro Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [0, 0, 1, 0, 2, 0]}, {"name": "Folio iPhone 17 Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [1, 1, 8, 0, 0, 0]}, {"name": "Folio renforcé MagSafe iPhone 17 Pro Max 2m Noir + Garantie à vie Force Case", "quantities": [0, 0, 2, 0, 0, 1]}, {"name": "Folio Samsung Galaxy A16 4G / A16 5G Wallet Fonction Stand Rouge - Certifié GRS Bigben", "quantities": [0, 2, 0, 0, 1, 0]}, {"name": "Folio Samsung Galaxy A17 4G/5G Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [1, 1, 0, 2, 3, 0]}, {"name": "Folio Samsung Galaxy A26 Flip Wallet Designed for Samsung Noir Samsung", "quantities": [3, 1, 1, 3, 0, 0]}, {"name": "Folio Samsung Galaxy A26 Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [4, 0, 0, 0, 0, 0]}, {"name": "Folio Samsung Galaxy A37 5G Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [2, 0, 2, 1, 2, 0]}, {"name": "Folio Samsung Galaxy A57 5G Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [3, 0, 2, 1, 3, 0]}, {"name": "Folio Samsung Galaxy S24 S View Cover avec fenêtre transparente Noir Samsung", "quantities": [3, 1, 1, 2, 1, 0]}, {"name": "Folio Samsung Galaxy S24+ S View Cover avec fenêtre transparente Noir Samsung", "quantities": [0, 1, 1, 2, 1, 0]}, {"name": "Folio Samsung Galaxy S25 Ultra Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [2, 2, 3, 1, 3, 0]}, {"name": "Folio Samsung Galaxy S25 Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [2, 3, 0, 0, 1, 1]}, {"name": "Folio Samsung Galaxy S25+ Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [2, 1, 2, 1, 3, 0]}, {"name": "Folio Samsung Paradigm Slim Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [2, 2, 2, 3, 5, 0]}, {"name": "Folio Samsung R13 Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [2, 0, 0, 2, 2, 0]}, {"name": "Folio Stand iPhone 14 Pro Max Noir Bigben", "quantities": [0, 0, 0, 0, 3, 0]}, {"name": "Folio Stand iPhone 14 Pro Noir Bigben", "quantities": [0, 0, 0, 0, 4, 0]}, {"name": "Folio Stand Noir pour iPhone 13 Pro Bigben", "quantities": [0, 0, 0, 3, 0, 0]}, {"name": "Folio Stand Samsung G S23+ 5G Noir Bigben", "quantities": [0, 0, 0, 3, 0, 0]}, {"name": "Folio Wallet 65% GRS Honor 600 Lite Noir", "quantities": [0, 0, 2, 1, 0, 0]}, {"name": "Folio Wallet 65% GRS Miracle 1 Noir", "quantities": [0, 0, 1, 1, 2, 0]}, {"name": "Folio Wallet Honor 200 Support vidéo Noir - 65% Plastique recyclé Certifié GRS Bigben", "quantities": [2, 0, 1, 4, 2, 2]}, {"name": "Folio Wallet Honor Magic 7 Lite Support vidéo Noir - 65% Plastique recyclé Certifié GRS Bigben", "quantities": [2, 1, 2, 2, 0, 0]}, {"name": "Folio Wallet Samsung Galaxy S24 FE Support vidéo Noir - 65% Plastique recyclé Certifié GRS Bigben", "quantities": [3, 2, 1, 2, 2, 0]}, {"name": "Folio Xiaomi 15T Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [2, 0, 0, 1, 0, 0]}, {"name": "Folio Xiaomi Redmi 14C 4G Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [2, 2, 2, 2, 0, 2]}, {"name": "Folio Xiaomi Redmi 15C 4G / 5G Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [4, 0, 0, 2, 0, 0]}, {"name": "Folio Xiaomi Redmi Note 14 4G Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [2, 1, 2, 1, 2, 2]}, {"name": "Folio Xiaomi Redmi Note 14 5G Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [4, 4, 4, 0, 4, 5]}, {"name": "Folio Xiaomi Redmi Note 14 Pro + 5G Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [2, 2, 1, 1, 2, 2]}, {"name": "Folio Xiaomi Redmi Note 14 Pro 5G Wallet Fonction Stand Noir - Certifié GRS Bigben", "quantities": [2, 2, 2, 1, 1, 2]}, {"name": "GREEN_E CABLE LIGHTNING MFI EMBOUT ROTATIF 1M20 BLANC", "quantities": [0, 0, 3, 0, 1, 0]}, {"name": "KIT CPL TP-LINK AV500 500Mbs POWERLINE + PRISE + ROUTEUR WIFI 300mbs", "quantities": [0, 1, 1, 0, 0, 0]}, {"name": "KIT PIETON ECOUTEURS INTRA-AURICULAIRE LIGHTNING (MFI) + TELECOMMANDE + MICRO BLANC - JAYM®", "quantities": [0, 0, 1, 4, 1, 0]}, {"name": "Kit piéton Bluetooth Enco Free Oppo", "quantities": [0, 0, 0, 0, 0, 3]}, {"name": "LAMPE DE CHEVET / BUREAU A LED AVEC CHARGE A INDUCTION 10W - BLANCHE - SETTY", "quantities": [0, 2, 0, 2, 0, 0]}, {"name": "LAMPE DE CHEVET / BUREAU A LED AVEC CHARGE A INDUCTION QI 10W - BLANC", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "LAMPE SELFIE PORTABLE UNIVERSELLE", "quantities": [0, 7, 0, 0, 6, 0]}, {"name": "LAMPE SELFIE PORTABLE UNIVERSELLE - JAYM", "quantities": [0, 0, 1, 0, 3, 0]}, {"name": "LANYARD TOUR DE POIGNET / PORTE-CLÉS AVEC CABLE CHARGE & SYNCHRO USB-C VERS USB-C PD 60W - VIOLET - DEVIA", "quantities": [0, 2, 0, 1, 0, 0]}, {"name": "Lentilles de protéction caméra métal CORNING Iphone 17 - NOVIANT", "quantities": [0, 0, 0, 0, 0, 4]}, {"name": "Lentilles de protéction caméra métal CORNING Iphone 17 Pro/Pro Max - NOVIANT", "quantities": [2, 0, 0, 0, 0, 4]}, {"name": "Lentilles de protéction caméra métal CORNING Noir Samsung S26 - NOVIANT", "quantities": [0, 0, 0, 0, 0, 3]}, {"name": "Lot de 3 adaptateurs pour micro et nano SIM", "quantities": [0, 10, 1, 0, 0, 0]}, {"name": "MINI ENCEINTE BT DIVOOM TIMEBOX MINI LED ROUGE", "quantities": [1, 0, 0, 1, 1, 0]}, {"name": "Mini enceinte sans fil ColorCube noire", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "Mini perche télescopique rose avec déclencheur photo", "quantities": [0, 5, 0, 1, 0, 0]}, {"name": "Mini perche à selfie filaire Noire Bigben", "quantities": [0, 0, 3, 0, 0, 0]}, {"name": "MUVIT SPRING CABLE DOUBLE CONNECTIQUES MICRO USB+ LIGHTNING 2.4A BLANC", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "PACK CHARGEUR VOITURE RAPIDE DOUBLE USB : USB-A 18W QC / USB-C 30W PD + CABLE USB-C VERS USB-C 1M (60W) NOIRS - JAYM®", "quantities": [0, 0, 6, 0, 0, 0]}, {"name": "Pack Spray nettoyant Summer 2022 Bleu Glacier en pochette Kutjo", "quantities": [3, 0, 0, 0, 0, 0]}, {"name": "Porte carte magsafe ultra fin noir - NOVIANT", "quantities": [0, 4, 6, 0, 0, 0]}, {"name": "Portefeuille magsafe noir - NOVIANT", "quantities": [0, 4, 0, 0, 0, 0]}, {"name": "Powerbank sans fil Magnétique MagSafe 5000mAh 1 port USB C 15W Qi Métal Noir + Garantie à vie Force Power", "quantities": [0, 4, 0, 0, 1, 0]}, {"name": "PRISE PARAFOUDRE 4 PRISES - BELKIN", "quantities": [0, 1, 0, 1, 1, 0]}, {"name": "PRISE PARAFOUDRE 6 PRISES - BELKIN", "quantities": [0, 0, 0, 0, 3, 0]}, {"name": "PRISE PARAFOUDRE EATON 1 PRISE + BOX", "quantities": [0, 5, 0, 0, 0, 0]}, {"name": "Protecteur de câble pingouin", "quantities": [0, 0, 0, 0, 3, 0]}, {"name": "Protège lentilles iPhone 15 / 15 Plus / 14 / 14 Plus x2 Verre trempé Argent + Garantie à vie - Certifié GRS Force Glass", "quantities": [2, 4, 2, 0, 1, 0]}, {"name": "Protège lentilles iPhone 15 / 15 Plus / 14 / 14 Plus x2 Verre trempé Noir + Garantie à vie - Certifié GRS Force Glass", "quantities": [1, 1, 1, 1, 0, 0]}, {"name": "Protège lentilles iPhone 16 / 16 Plus x2 Verre trempé Argent + Garantie à vie - Certifié GRS Force Glass", "quantities": [1, 2, 0, 0, 0, 0]}, {"name": "Protège écran 2.5D Honor X7 Bigben", "quantities": [0, 0, 0, 5, 0, 0]}, {"name": "STATION DE RECHARGE INDUCTION 4-EN-1 MAGSAFE 15W : IPHONE + AIRPODS + WATCH + BATTERIE DE SECOURS INTEGREE - BLANC - FOREVER", "quantities": [0, 1, 1, 1, 0, 0]}, {"name": "STATION DE RECHARGE PLIABLE 3-EN-1 POUR TELEPHONE + MONTRE + ECOUTEURS - COMPATIBLE CHARGE A INDUCTION + MAGSAFE - JAYM", "quantities": [5, 3, 1, 1, 0, 2]}, {"name": "STATION DE RECHARGE PLIABLE INDUCTION 3-EN-1 MAGSAFE : IPHONE + AIRPODS + WATCH - BLANC - CHOETECH", "quantities": [2, 0, 1, 0, 0, 0]}, {"name": "SUPPORT VOITURE AVEC CHARGE INDUCTION 10W ET FERMETURE MECANIQUE - PLATINET", "quantities": [0, 0, 3, 0, 0, 0]}, {"name": "Support voiture fixation tableau de bord", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "SUPPORT VOITURE MAGNETIQUE FIXATION GRILLE AVEC CHARGE INDUCTION MAGSAFE 15W + CABLE USB-C - JAYM®", "quantities": [1, 0, 2, 0, 0, 0]}, {"name": "Support voiture noir pour tablettes de 7 à 10.1 pouces", "quantities": [0, 2, 0, 0, 3, 0]}, {"name": "SUPPORT VOITURE POUR APPUIE TETE IDEAL POUR IPAD ET TABLETTE", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "SUPPORT VOITURE SPIGEN STEALTH NOIR/BLEU", "quantities": [0, 6, 0, 0, 0, 0]}, {"name": "SUPPORT VOITURE UNIVERSEL FIXATION GRILLE", "quantities": [0, 0, 1, 0, 2, 0]}, {"name": "SUPPORT VOITURE UNIVERSEL FIXATION GRILLE JAYM", "quantities": [0, 0, 4, 2, 0, 1]}, {"name": "SUPPORT VOITURE UNIVERSEL FIXATION MAGNETIQUE JAYM", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "SUPPORT VOITURE UNIVERSEL MAGNETIQUE FIXATION GRILLE - JAYM®", "quantities": [3, 0, 0, 0, 0, 0]}, {"name": "TOUR DE COU FASHION ROSE POUDRE MAT AVEC ATTACHE UNIVERSELLE - 1.20M - JAYM®", "quantities": [0, 2, 0, 1, 0, 0]}, {"name": "Tracker Card pour Iphone rechargeable induction noir - NOVIANT", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "Tracker pour Iphone rond blanc - NOVIANT", "quantities": [1, 2, 8, 7, 7, 0]}, {"name": "UNPLUG CHARGEUR VOITURE RETRACTABLE 2A LIGHTNING + 1USB NOIR", "quantities": [0, 3, 0, 0, 0, 0]}, {"name": "VENTILATEUR DE BUREAU PORTABLE 3 VITESSES - POWERBANK AMOVIBLE 4 000MAH - PLATINET", "quantities": [0, 6, 0, 0, 0, 0]}]};
+
+// ── Tab switching ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tab));
+}
+
+// ── Accessories agency cards ──
+let accActiveAgency = 'all';
+function buildAccCards() {
+  const { agencies, products } = ACCESSORIES_DATA;
+  const totals = agencies.map((_, i) => products.reduce((s, p) => s + (p.quantities[i] || 0), 0));
+  const grand = totals.reduce((a, b) => a + b, 0);
+  const row = document.getElementById('accAgencyCards');
+  if (!row) return;
+  row.innerHTML = '';
+  const allCard = document.createElement('div');
+  allCard.className = 'ag-card all-card' + (accActiveAgency === 'all' ? ' active' : '');
+  allCard.dataset.ag = 'all';
+  allCard.innerHTML = `<div class="ag-name">Toutes</div><div class="ag-count">${grand}</div><div class="ag-label">access.</div>`;
+  allCard.onclick = () => setAccAgency('all');
+  row.appendChild(allCard);
+  agencies.forEach((ag, i) => {
+    const card = document.createElement('div');
+    card.className = 'ag-card' + (accActiveAgency === ag ? ' active' : '');
+    card.dataset.ag = ag;
+    card.innerHTML = `<div class="ag-name">${ag}</div><div class="ag-count">${totals[i]}</div><div class="ag-label">access.</div>`;
+    card.onclick = () => setAccAgency(ag);
+    row.appendChild(card);
+  });
+}
+function setAccAgency(ag) {
+  accActiveAgency = ag;
+  document.querySelectorAll('#accAgencyCards .ag-card').forEach(c => c.classList.toggle('active', c.dataset.ag === ag));
+  renderAcc();
+}
+
+function normalizeStr(s) {
+  return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+function renderAcc() {
+  const { agencies, products } = ACCESSORIES_DATA;
+  const raw = document.getElementById('accSearch').value.trim();
+  const wrap = document.getElementById('accTableWrap');
+  const statusBar = document.getElementById('accStatusBar');
+  const totalsBar = document.getElementById('accTotalsBar');
+  if (raw.length < 2) {
+    wrap.innerHTML = '<div class="acc-hint"><span class="acc-icon">🔍</span>Saisissez au moins 2 caractères pour afficher les accessoires compatibles.<br><small style="color:#cbd5e1;margin-top:6px;display:block;">ex : Samsung A37 &nbsp;·&nbsp; coque &nbsp;·&nbsp; chargeur &nbsp;·&nbsp; iPhone 17</small></div>';
+    statusBar.style.display = 'none';
+    totalsBar.style.display = 'none';
+    return;
+  }
+  const terms = normalizeStr(raw).split(/\s+/).filter(t => t.length > 0);
+  const agIdx = accActiveAgency === 'all' ? null : agencies.indexOf(accActiveAgency);
+  let rows = products.filter(p => {
+    const norm = normalizeStr(p.name);
+    if (!terms.every(t => norm.includes(t))) return false;
+    if (agIdx !== null && (p.quantities[agIdx] || 0) === 0) return false;
+    return true;
+  });
+  const total = rows.length;
+  document.getElementById('accCount').textContent = total === 0 ? 'Aucun résultat' : `${total} accessoire${total > 1 ? 's' : ''}`;
+  document.getElementById('accLabel').textContent = accActiveAgency === 'all' ? '· toutes agences' : `· ${accActiveAgency} uniquement`;
+  statusBar.style.display = 'flex';
+  if (total === 0) {
+    wrap.innerHTML = `<div class="acc-hint"><span class="acc-icon">😕</span>Aucun accessoire trouvé pour <strong>« ${raw} »</strong>.</div>`;
+    totalsBar.style.display = 'none';
+    return;
+  }
+  const cols = agIdx !== null ? [agIdx] : agencies.map((_, i) => i);
+  const showTotal = cols.length > 1;
+  const colTotals = cols.map(ci => rows.reduce((s, p) => s + (p.quantities[ci] || 0), 0));
+  const grandTotal = colTotals.reduce((a, b) => a + b, 0);
+  const grandItems = rows.length;
+  const colHeaders = cols.map(ci => `<th class="th-ag" data-ag="${agencies[ci]}">${agencies[ci]}</th>`).join('');
+  const tbody = rows.map(p => {
+    const cells = cols.map(ci => {
+      const q = p.quantities[ci] || 0;
+      if (q === 0) return `<td><span class="qty-zero">–</span></td>`;
+      return `<td><span class="qty-badge" data-ag="${agencies[ci]}">${q}</span></td>`;
+    }).join('');
+    const rt = cols.reduce((s, ci) => s + (p.quantities[ci] || 0), 0);
+    const totalCell = showTotal ? `<td><span class="qty-total-val">${rt}</span></td>` : '';
+    return `<tr><td style="text-align:left;color:#334155;font-size:12px;line-height:1.4;padding-right:1rem;">${p.name}</td>${cells}${totalCell}</tr>`;
+  }).join('');
+  const totalsRow = `<tr class="totals-row"><td style="font-weight:700;text-align:left;">Total</td>${colTotals.map((t,idx) => `<td><span class="qty-badge" data-ag="${agencies[cols[idx]]}">${t}</span></td>`).join('')}${showTotal ? `<td><span class="qty-total-val">${grandTotal}</span></td>` : ''}</tr>`;
+  wrap.innerHTML = `<div class="table-scroll"><table><thead><tr><th style="text-align:left;width:45%;color:#64748b;">Accessoire</th>${colHeaders}${showTotal ? '<th class="th-total">Total</th>' : ''}</tr></thead><tbody>${tbody}${totalsRow}</tbody></table></div>`;
+  totalsBar.style.display = 'block';
+  totalsBar.innerHTML = `<strong>${grandItems}</strong> reference${grandItems>1?'s':''} ķ <strong>${grandTotal}</strong> unité${grandTotal>1?'s':''} en stock`;
+}
+
+function initAcc() {
+  document.getElementById('accSearch').addEventListener('keydown', e => { if (e.key === 'Escape') { e.target.value = ''; renderAcc(); } });
+  buildAccCards();
+  const inp = document.getElementById('accSearch');
+  if (inp) inp.style.cssText = 'width:100%;padding:12px 14px 12px 40px;border:2px solid #e2e8f0;border-radius:14px;font-size:14px;font-family:inherit;background:#fff;outline:none;transition:border-color .15s,box-shadow .15s;box-shadow:0 1px 4px rgba(0,0,0,.05);';
+  inp.addEventListener('focus', () => inp.style.borderColor = '#6366f1');
+  inp.addEventListener('blur', () => inp.style.borderColor = '#e2e8f0');
+}
+
 </script>
 </body>
 </html>
+>
