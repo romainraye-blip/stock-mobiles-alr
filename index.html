@@ -343,7 +343,7 @@ function setAccAgency(ag) {
 }
 
 function normalizeStr(s) {
-  return s.toLowerCase().normalize('NFD').replace(/[Ì€-M¯]/g, '');
+  return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 }
 function renderAcc() {
   const { agencies, products } = ACCESSORIES_DATA;
